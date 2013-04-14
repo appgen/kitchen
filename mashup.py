@@ -3,33 +3,17 @@
 Mash up multiple datasets.
 '''
 
-def group_columns(views):
-    '''
-    Produce a dictionary mapping column types to all of the datasets containing
-    such a column.
-    '''
-    column_types = {}
-    for view in views:
-        for col in view['columns']:
-            key = (col['dataTypeName'], col['fieldName'])
-            if key not in column_types:
-                column_types[key] = set()
-            column_types[key].add(view['id'])
-    return column_types
-
-def _group_tags(views):
-    tags = {}
-    for view in views:
-        for tag in view.get('tags', []):
-            if tag not in tags:
-                tags[tag] = set()
-            tags[tag].add(view['id'])
-    return tags
-
 def group_tags(views):
     return group(lambda view: view.get('tags', []))
 
+def group_columns(views):
+    return group(lambda view: [(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])])
+
 def group(func):
+    '''
+    Produce a dictionary mapping column types to all of the datasets containing
+    whatever property.
+    '''
     items = {}
     for view in views:
         for item in func(view):
