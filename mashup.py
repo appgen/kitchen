@@ -24,4 +24,6 @@ if __name__ == '__main__':
     view_dir = os.path.join('pantry', 'socrata', 'views')
     view_ids = os.listdir(view_dir)
     views = (json.load(open(os.path.join(view_dir, view_id))) for view_id in view_ids)
-    print group_columns(views)
+    for k, v in group_columns(views).items():
+        if len(v) > 1:
+            print k, v
