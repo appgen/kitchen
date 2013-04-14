@@ -4,12 +4,15 @@ Mash up multiple datasets.
 '''
 
 def group_tags(views):
-    return group(lambda view: view.get('tags', []))
+    return group(views, lambda view: view.get('tags', []))
 
 def group_columns(views):
-    return group(lambda view: [(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])])
+    return group(views, lambda view: [(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])])
 
-def group(func):
+def group_owner(views):
+    return group(views, lambda view: [view.get('owner', {}).get('displayName', None)])
+
+def group(niews, func):
     '''
     Produce a dictionary mapping column types to all of the datasets containing
     whatever property.
@@ -31,4 +34,6 @@ if __name__ == '__main__':
     for k, v in group_columns(views).items():
         if len(v) > 30:
             print k
-    print group_tags(views)
+    for k, v in group_owner(views).items():
+        if len(v) > 2:
+            print k
