@@ -5,40 +5,40 @@ Mash up multiple datasets.
 from urlparse import urlparse
 from copy import deepcopy
 
-class AttributionTrie:
-    def __init__(self, trie = [{}, set()]):
-        self._trie = trie
+class Attributiontree:
+    def __init__(self, tree = [{}, set()]):
+        self._tree = tree
 
     # Construction
     # ---------------------------------
 
-    # The empty trie
+    # The empty tree
     empty = [{}, set()]
 
     def build(self, path, viewid):
-        self._trie = AttributionTrie._build_trie(self._trie, path, viewid)
+        self._tree = Attributiontree._build_tree(self._tree, path, viewid)
 
     @staticmethod
-    def _build_trie(trie, path, viewid):
+    def _build_tree(tree, path, viewid):
         '''
-        Build a trie by which we can search urls. Each subtrie is a tuple of a dict
+        Build a tree by which we can search urls. Each subtree is a tuple of a dict
         of urls and a set of 4x4 Socrata identifiers.
         '''
-        # If we have stuff in the path that are not in the trie, add an empty branch.
-        if path[0] not in trie[0]:
-            trie[0][path[0]] = AttributionTrie.empty
-        subtrie = deepcopy(trie[0][path[0]])
+        # If we have stuff in the path that are not in the tree, add an empty branch.
+        if path[0] not in tree[0]:
+            tree[0][path[0]] = Attributiontree.empty
+        subtree = deepcopy(tree[0][path[0]])
 
         # Recurse
         if len(path) == 1:
             # We have no more items in the path, so we're done.
-            subtrie[1].add(viewid)
+            subtree[1].add(viewid)
         else:
             # Add the next url part
-            subtrie = AttributionTrie._build_trie(subtrie, path[1:], viewid)
+            subtree = Attributiontree._build_tree(subtree, path[1:], viewid)
 
-        trie[0][path[0]] = subtrie
-        return trie
+        tree[0][path[0]] = subtree
+        return tree
 
     # Querying
     # ---------------------------------
@@ -51,29 +51,29 @@ class AttributionTrie:
         return 'Children: %s  |  Viewids: %s' % tuple(params)
 
     def children(self):
-        return {k:AttributionTrie(v) for k,v in self._trie[0].items()}
+        return {k:Attributiontree(v) for k,v in self._tree[0].items()}
 
     def descendant(self, path):
         'Find things with similar urls.'
-        trie = deepcopy(self)
+        tree = deepcopy(self)
         for subdir in filter(None, path.split('/')):
-            trie = trie.children()[subdir]
-        return trie
+            tree = tree.children()[subdir]
+        return tree
 
     def child_paths(self):
-        return set(self._trie[0].keys())
+        return set(self._tree[0].keys())
 
     def descendant_paths(self):
         todo = [([], self)]
         while len(todo) > 0:
-            path, trie = todo.pop()
-            for filename, child in trie.children().items():
+            path, tree = todo.pop()
+            for filename, child in tree.children().items():
                 if len(child.current_viewids()) > 0:
                     yield '/'.join(path + [filename])
-            todo.extend([(path + [subdir], v) for subdir, v in trie.children().items()])
+            todo.extend([(path + [subdir], v) for subdir, v in tree.children().items()])
 
     def current_viewids(self):
-        return self._trie[1]
+        return self._tree[1]
 
     def descendant_viewids(self):
         todo = [self]
@@ -84,13 +84,13 @@ class AttributionTrie:
             todo.extend(current.children().values())
 
 def affiliation_links(views):
-    link_trie = AttributionTrie()
+    link_tree = Attributiontree()
     for view in views:
         if 'attributionLink' in view:
             url = urlparse(view['attributionLink'])
             path = [url.netloc] + filter(None, url.path.split('/') + [url.query])
-            link_trie.build(path, view['id'])
-    return link_trie
+            link_tree.build(path, view['id'])
+    return link_tree
 
 def group_tags(views):
     return group(views, lambda view: view.get('tags', []))
