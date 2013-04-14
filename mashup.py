@@ -17,7 +17,7 @@ def group_columns(views):
             column_types[key].add(view['id'])
     return column_types
 
-def group_tags(views):
+def _group_tags(views):
     tags = {}
     for view in views:
         for tag in view.get('tags', []):
@@ -25,6 +25,18 @@ def group_tags(views):
                 tags[tag] = set()
             tags[tag].add(view['id'])
     return tags
+
+def group_tags(views):
+    return group(lambda view: view.get('tags', []))
+
+def group(func):
+    items = {}
+    for view in views:
+        for item in func(view):
+            if item not in items:
+                items[item] = set()
+            items[item].add(view['id'])
+    return items
 
 if __name__ == '__main__':
     import os
