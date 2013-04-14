@@ -2,10 +2,11 @@
 '''
 Mash up multiple datasets.
 '''
+from urlparse import urlparse
 from copy import deepcopy
 
 class AttributionTrie:
-    def __init__(self, trie = AttributionTrie.empty):
+    def __init__(self, trie = [{}, set()]):
         self._trie = trie
 
     # Construction
@@ -26,14 +27,17 @@ class AttributionTrie:
         # If we have stuff in the path that are not in the trie, add an empty branch.
         if path[0] not in trie[0]:
             trie[0][path[0]] = AttributionTrie.empty
+        subtrie = deepcopy(trie[0][path[0]])
 
         # Recurse
         if len(path) == 1:
             # We have no more items in the path, so we're done.
-            trie[0][path[0]][1].add(viewid)
+            subtrie[1].add(viewid)
         else:
             # Add the next url part
-            trie[0][path[0]] = AttributionTrie._build_trie(trie[0][path[0]], path[1:], viewid)
+            subtrie = AttributionTrie._build_trie(subtrie, path[1:], viewid)
+
+        trie[0][path[0]] = subtrie
         return trie
 
     # Querying
@@ -41,7 +45,8 @@ class AttributionTrie:
     def __repr__(self):
         def shorten(param):
             if len(param) > 2:
-                return ', '.join(param[:2] + ['...'])
+                param = param[:2] + ['...']
+            return ', '.join(param)
         params = map(shorten, [self.children().keys(), list(self.viewids())])
         return 'Children: %s  |  Viewids: %s' % tuple(params)
 
@@ -50,6 +55,12 @@ class AttributionTrie:
 
     def viewids(self):
         return self._trie[1]
+
+    def lookup(self, path):
+        trie = deepcopy(self)
+        for subdir in path.split('/'):
+            trie = trie.children()[subdir]
+        return trie
 
 def trie_affiliation_links(views):
     link_trie = AttributionTrie()
