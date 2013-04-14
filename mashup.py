@@ -47,7 +47,7 @@ class AttributionTrie:
             if len(param) > 2:
                 param = param[:2] + ['...']
             return ', '.join(param)
-        params = map(shorten, [self.children().keys(), list(self.viewids())])
+        params = map(shorten, [self.children().keys(), list(self.current_viewids())])
         return 'Children: %s  |  Viewids: %s' % tuple(params)
 
     def children(self):
@@ -56,18 +56,30 @@ class AttributionTrie:
     def descendant(self, path):
         'Find things with similar urls.'
         trie = deepcopy(self)
-        for subdir in path.split('/'):
+        for subdir in filter(None, path.split('/')):
             trie = trie.children()[subdir]
         return trie
 
-    def immediate_viewids(self):
+    def child_paths(self):
+        return set(self._trie[0].keys())
+
+    def descendant_paths(self):
+        todo = [([], self)]
+        while len(todo) > 0:
+            path, trie = todo.pop()
+            for filename, child in trie.children().items():
+                if len(child.current_viewids()) > 0:
+                    yield '/'.join(path + [filename])
+            todo.extend([(path + [subdir], v) for subdir, v in trie.children().items()])
+
+    def current_viewids(self):
         return self._trie[1]
 
-    def extended_viewids(self):
+    def descendant_viewids(self):
         todo = [self]
         while len(todo) > 0:
             current = todo.pop()
-            for viewid in current.immediate_viewids():
+            for viewid in current.current_viewids():
                 yield viewid
             todo.extend(current.children().values())
 
@@ -114,3 +126,6 @@ if __name__ == '__main__':
     for k, v in group_owner(views).items():
         if len(v) > 2:
             print k
+
+    t = trie_affiliation_links(views)
+    print set(t.descendant('schools.nyc.gov/NR/rdonlyres/66E8CC55-51E7-4DE5-8C5C-08C588701A1E').descendant_viewids())
