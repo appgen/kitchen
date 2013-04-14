@@ -47,20 +47,21 @@ class AttributionTrie:
             if len(param) > 2:
                 param = param[:2] + ['...']
             return ', '.join(param)
-        params = map(shorten, [self.children().keys(), list(self.viewids())])
+        params = map(shorten, [self._children().keys(), list(self.viewids())])
         return 'Children: %s  |  Viewids: %s' % tuple(params)
 
-    def children(self):
+    def _children(self):
         return {k:AttributionTrie(v) for k,v in self._trie[0].items()}
+
+    def descendant(self, path):
+        'Find things with similar urls.'
+        trie = deepcopy(self)
+        for subdir in path.split('/'):
+            trie = trie._children()[subdir]
+        return trie
 
     def viewids(self):
         return self._trie[1]
-
-    def lookup(self, path):
-        trie = deepcopy(self)
-        for subdir in path.split('/'):
-            trie = trie.children()[subdir]
-        return trie
 
 def trie_affiliation_links(views):
     link_trie = AttributionTrie()
