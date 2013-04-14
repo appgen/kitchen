@@ -129,3 +129,4 @@ if __name__ == '__main__':
 
     t = affiliation_links(views)
     print set(t.descendant('schools.nyc.gov/NR/rdonlyres/66E8CC55-51E7-4DE5-8C5C-08C588701A1E').descendant_viewids())
+    print set(t.descendant('www.nyc.gov/html/dcp/html').descendant_paths())
