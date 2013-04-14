@@ -2,7 +2,7 @@
 import os
 from lxml.html import fromstring
 
-DOWNLOAD_DIRECTORY = os.path.join('pantry', 'collabfinder', 'current', 'project', 'projects')
+DOWNLOAD_DIRECTORY = os.path.join('pantry', 'collabfinder', 'current', 'projects')
 
 def _backgrounds(html):
     'This project needs...'
@@ -55,4 +55,4 @@ def answers():
 if __name__ == '__main__':
     import sys
     import json
-    json.dump(list(main()), open(os.path.join('output', 'projects.json'), 'w'))
+    print json.dumps(list(answers()))
