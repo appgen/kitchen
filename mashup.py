@@ -50,6 +50,9 @@ class AttributionTrie:
         params = map(shorten, [self._children().keys(), list(self.viewids())])
         return 'Children: %s  |  Viewids: %s' % tuple(params)
 
+    def viewids(self):
+        return self._trie[1]
+
     def _children(self):
         return {k:AttributionTrie(v) for k,v in self._trie[0].items()}
 
@@ -60,8 +63,13 @@ class AttributionTrie:
             trie = trie._children()[subdir]
         return trie
 
-    def viewids(self):
-        return self._trie[1]
+    def descendants(self, path = None):
+        todo = [self.descendant(path) if path else self]
+        while len(todo) > 0:
+            current = todo.pop()
+            for viewid in current.viewids():
+                yield viewid
+            todo.extend(current._children().values())
 
 def trie_affiliation_links(views):
     link_trie = AttributionTrie()
