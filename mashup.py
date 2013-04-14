@@ -38,8 +38,18 @@ class AttributionTrie:
 
     # Querying
     # ---------------------------------
+    def __repr__(self):
+        def shorten(param):
+            if len(param) > 2:
+                return ', '.join(param[:2] + ['...'])
+        params = map(shorten, [self.children().keys(), list(self.viewids())])
+        return 'Children: %s  |  Viewids: %s' % tuple(params)
+
     def children(self):
         return {k:AttributionTrie(v) for k,v in self._trie[0].items()}
+
+    def viewids(self):
+        return self._trie[1]
 
 def trie_affiliation_links(views):
     link_trie = AttributionTrie()
