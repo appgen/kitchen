@@ -83,7 +83,7 @@ class AttributionTrie:
                 yield viewid
             todo.extend(current.children().values())
 
-def trie_affiliation_links(views):
+def affiliation_links(views):
     link_trie = AttributionTrie()
     for view in views:
         if 'attributionLink' in view:
@@ -127,5 +127,5 @@ if __name__ == '__main__':
         if len(v) > 2:
             print k
 
-    t = trie_affiliation_links(views)
+    t = affiliation_links(views)
     print set(t.descendant('schools.nyc.gov/NR/rdonlyres/66E8CC55-51E7-4DE5-8C5C-08C588701A1E').descendant_viewids())
