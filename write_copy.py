@@ -18,6 +18,7 @@ from numpy import array
 from nltk.tokenize import wordpunct_tokenize #, word_tokenize, sent_tokenize
 from nltk.probability import LidstoneProbDist #LaplaceProbDist
 from nltk import NgramModel
+import nltk
 
 import collabfinder
 
@@ -59,11 +60,23 @@ def train_subdescription(subdescriptions):
     return lm, length
 
 def something():
+    sentences = []
     for a in collabfinder.answers():
         if a['description']:
-            tokenized = nltk.word_tokenize(a['description']['what'])
-            tagged = nltk.pos_tag(tokenized)
-            chunked = nltk.batch_ne_chunk(tagged, binary = True)
+            sentences.extend(nltk.sent_tokenize(a['description']['what']))
+
+    tagged = (nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in sentences)
+    chunked = nltk.batch_ne_chunk(tagged, binary = True)
+
+    entity_names = []
+    for tree in chunked:
+        print tree
+        if hasattr(tree, 'node') and tree.node:
+            entity_names.append(' '.join([child[0] for child in tree]))
+        else:
+            for child in tree:
+                entity_names.extend(extract_entity_names(child))
+    print entity_names
 
 if __name__ == '__main__':
     import os

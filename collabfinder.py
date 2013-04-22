@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 import os
-from lxml.html import fromstring
+from lxml.html import fromstring, HTMLParser
 
 DOWNLOAD_DIRECTORY = os.path.join('pantry', 'collabfinder', 'current', 'projects')
 
@@ -43,14 +43,15 @@ def _answers(projectId, html):
         'github': _github(html),
     }
 
+HTML_PARSER = HTMLParser(encoding = 'utf-8')
 def answers():
     'Get the answers to all the questions for all the projects.'
     # Loop through file names
     for filename in os.listdir(DOWNLOAD_DIRECTORY):
-        raw = open(os.path.join(DOWNLOAD_DIRECTORY, filename)).read()
+        raw = open(os.path.join(DOWNLOAD_DIRECTORY, filename)).read().decode('utf-8')
         if raw == '':
             continue
-        yield _answers(int(filename), fromstring(raw))
+        yield _answers(int(filename), fromstring(raw, parser = HTML_PARSER))
 
 if __name__ == '__main__':
     import sys
