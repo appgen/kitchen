@@ -67,16 +67,20 @@ def something():
 
     tagged = (nltk.pos_tag(nltk.word_tokenize(sentence)) for sentence in sentences)
     chunked = nltk.batch_ne_chunk(tagged, binary = True)
-
-    entity_names = []
     for tree in chunked:
-        print tree
-        if hasattr(tree, 'node') and tree.node:
+        print '---'
+        print unicode(tree)
+        print extract_entity_names(tree)
+
+def extract_entity_names(tree):
+    entity_names = []
+    if hasattr(tree, 'node') and tree.node:
+        if tree.node == 'NE':
             entity_names.append(' '.join([child[0] for child in tree]))
         else:
             for child in tree:
                 entity_names.extend(extract_entity_names(child))
-    print entity_names
+    return entity_names
 
 if __name__ == '__main__':
     import os
