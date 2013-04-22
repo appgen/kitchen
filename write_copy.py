@@ -82,6 +82,11 @@ def extract_entity_names(tree):
                 entity_names.extend(extract_entity_names(child))
     return entity_names
 
+from nltk.model.api import ModelI
+class CollabfinderModel(ModelI):
+    'http://nltk.org/_modules/nltk/model/ngram.html#NgramModel'
+    pass
+
 if __name__ == '__main__':
     import os
     import json
