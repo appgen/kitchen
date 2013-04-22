@@ -58,6 +58,13 @@ def train_subdescription(subdescriptions):
 
     return lm, length
 
+def something():
+    for a in collabfinder.answers():
+        if a['description']:
+            tokenized = nltk.word_tokenize(a['description']['what'])
+            tagged = nltk.pos_tag(tokenized)
+            chunked = nltk.batch_ne_chunk(tagged, binary = True)
+
 if __name__ == '__main__':
     import os
     import json
