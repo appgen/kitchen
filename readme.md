@@ -2,8 +2,11 @@
 For the copy-writing, I had envisioned parsing the text into a grammatical
 tree, formulating the various trees into a grammar and generating text that
 matched that structure, weighting the random text generation towards the
-app name and the app topic for appropriate parts of speech.
-[This page](http://nltk.googlecode.com/svn/trunk/doc/book/ch09.html) might help.
+app name and the app topic for appropriate parts of speech. These pages might
+help.
+
+* http://nltk.googlecode.com/svn/trunk/doc/book/ch09.html
+* http://stackoverflow.com/questions/15009656/how-to-use-nltk-to-generate-sentences-from-an-induced-grammar
 
 A simpler approach might be an n-gram model on the part-of-speech-tagged
 sentences, randomly switching appropriate words for the app name and topic.
