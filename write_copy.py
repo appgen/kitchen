@@ -51,22 +51,22 @@ def annotate_full_subdescription(subdescriptions):
     '''
     return [nltk.pos_tag(nltk.wordpunct_tokenize(subdescription)) for subdescription in subdescriptions]
 
-def ngram_model(annotation):
+def ngram_model(n, annotation):
     'Build a model given a the pos-tagged annotation.'
-    m = nltk.model.NgramModel(2, annotation, estimator = (lambda fdist, bins: nltk.LidstoneProbDist(fdist, 0.2)))
+    m = nltk.model.NgramModel(n, annotation, estimator = (lambda fdist, bins: nltk.LidstoneProbDist(fdist, 0.2)))
     return m
 
 def is_sentence_end(token):
     return token[0] in '.?!'
 
 def model_subdescription(subdescriptions):
-    m1 = ngram_model(annotate_first_sentence(subdescriptions))
-    m2 = ngram_model(annotate_full_subdescription(subdescriptions))
+    m1 = ngram_model(2, annotate_first_sentence(subdescriptions))
+    m2 = ngram_model(3, annotate_full_subdescription(subdescriptions))
     return m1, m2
 
 def generate_subdescription(m1, m2):
     first_sentence = list(take_until(is_sentence_end, m1.generate(100)))
-    more = reversed(m2.generate(500, context = first_sentence))
+    more = reversed(m2.generate(300, context = first_sentence))
     rest = list(reversed(list(remove_until(is_sentence_end, more))))
     return first_sentence + rest
 
@@ -99,4 +99,5 @@ def get_subdescriptions():
 if __name__ == '__main__':
     s = get_subdescriptions()
     m1, m2 = model_subdescription(s['why'])
-    generate_subdescription(m1, m2)
+    def go(m1, m2):
+        return dewordize([p[0] for p in generate_subdescription(m1, m2)])
