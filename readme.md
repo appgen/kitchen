@@ -13,3 +13,8 @@ sentences, randomly switching appropriate words for the app name and topic.
 I'd build one model for the first sentences and a separate model for the
 full dataset, and I'd use the output of the first model as a context for
 the second.
+
+## Joining datasets
+To do: Allow for fuzzier column name matches. For example, "Building Address"
+should match "building_address", "NEIGHBORHOOD" should match "Neighborhood" and
+"Building Tax Expenses" should match "Bldg tax expenses".

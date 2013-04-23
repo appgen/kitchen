@@ -18,4 +18,24 @@ def viewids():
 def columns():
     pass # for k, v in group_columns(views()).items()
 
-example = group_columns(viewids())[(u'text', u'neighborhood')]
+def join(column_name, view_ids):
+    # Load
+    dfs = map(rows, view_ids)
+
+    for df in dfs:
+        # Lowercase names
+        df.columns = [name.lower() for name in df.columns]
+        # Distinct
+        df = df.groupby(column_name).last()
+
+    # Join
+    left = dfs[0]
+    for right in dfs[1:]:
+        try:
+            left = pandas.merge(left, right, on = column_name)
+        except:
+            break
+    return left
+
+if __name__ == '__main__':
+    example = join(u'building_address', group_columns(viewids())[(u'text', u'building_address')])
