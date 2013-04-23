@@ -42,19 +42,49 @@ def annotate_first_sentence(subdescriptions):
     :param subdescription: a list of "what", "why" or "need" string
     :type subdescription: list(unicode)
     '''
-    return (nltk.pos_tag(nltk.word_tokenize(nltk.sent_tokenize(subdescription)[0])) for subdescription in subdescriptions)
+    return [nltk.pos_tag(nltk.word_tokenize(nltk.sent_tokenize(subdescription)[0])) for subdescription in subdescriptions]
 
 def annotate_full_subdescription(subdescriptions):
     '''
     :param subdescriptions: a list of training texts
     :type subdescriptions: list(unicode)
     '''
-    return (nltk.pos_tag(nltk.wordpunct_tokenize(subdescription)) for subdescription in subdescriptions)
+    return [nltk.pos_tag(nltk.wordpunct_tokenize(subdescription)) for subdescription in subdescriptions]
 
 def ngram_model(annotation):
     'Build a model given a the pos-tagged annotation.'
-    m = nltk.model.NgramModel(3, train, estimator = (lambda fdist, bins: nltk.LidstoneProbDist(fdist, 0.2)))
+    m = nltk.model.NgramModel(2, annotation, estimator = (lambda fdist, bins: nltk.LidstoneProbDist(fdist, 0.2)))
     return m
+
+def is_sentence_end(token):
+    return token[0] in '.?!'
+
+def model_subdescription(subdescriptions):
+    m1 = ngram_model(annotate_first_sentence(subdescriptions))
+    m2 = ngram_model(annotate_full_subdescription(subdescriptions))
+    return m1, m2
+
+def generate_subdescription(m1, m2):
+    first_sentence = list(take_until(is_sentence_end, m1.generate(100)))
+    more = reversed(m2.generate(500, context = first_sentence))
+    rest = list(reversed(list(remove_until(is_sentence_end, more))))
+    return first_sentence + rest
+
+def remove_until(f, iterable):
+    'Take until the condition is matched'
+    for i in iterable:
+        if f(i):
+            yield i
+            break
+    for i in iterable:
+        yield i
+
+def take_until(f, iterable):
+    'Take until the condition is matched'
+    for i in iterable:
+        yield i
+        if f(i):
+            break
 
 def get_subdescriptions():
     import os
@@ -67,4 +97,6 @@ def get_subdescriptions():
     return subdescriptions
 
 if __name__ == '__main__':
-    models[key] = train_subdescription(subdescriptions)
+    s = get_subdescriptions()
+    m1, m2 = model_subdescription(s['why'])
+    generate_subdescription(m1, m2)
