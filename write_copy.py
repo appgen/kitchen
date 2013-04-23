@@ -67,8 +67,7 @@ def model_subdescription(subdescriptions):
 def generate_subdescription(m1, m2):
     first_sentence = list(take_until(is_sentence_end, m1.generate(100)))
     more = reversed(m2.generate(300, context = first_sentence))
-    rest = list(reversed(list(remove_until(is_sentence_end, more))))
-    return first_sentence + rest
+    return list(reversed(list(remove_until(is_sentence_end, more))))
 
 def remove_until(f, iterable):
     'Take until the condition is matched'
