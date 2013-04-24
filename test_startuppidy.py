@@ -1,9 +1,9 @@
-from startuppidy import app
+import startuppidy
 import nose.tools as n
 
 def test_keys():
     'All of the app parameters should be present.'
-    observed = set(app(1337).keys())
+    observed = set(startuppidy.app(1337).keys())
     expected = {
         # Identity
         'dataset_ids',
@@ -26,3 +26,9 @@ def test_keys():
         # Data
         'geojson',
     }
+    n.assert_dict_equal(observed, expected)
+
+def test_app_name_should_be_unicode():
+    observed = type(startuppidy._app_name(42, ['master plumber', 'education']))
+    n.assert_equal(observed, unicode)
+
