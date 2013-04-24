@@ -1,3 +1,9 @@
+Kitchen: Convert raw data into a JSON file per app
+====
+
+Run `run.py` to build one JSON file per app in the `comestibles` directory.
+This file runs everything else in the directory.
+
 ## Copy-writing approach
 For the copy-writing, I had envisioned parsing the text into a grammatical
 tree, formulating the various trees into a grammar and generating text that
