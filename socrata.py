@@ -3,7 +3,7 @@ import json
 
 import pandas
 
-from group import group_columns
+from socrata_group import group_columns
 
 SOCRATA = os.path.join('pantry', 'socrata')
 VIEWS = os.path.join(SOCRATA, 'views')
@@ -12,11 +12,13 @@ def rows(viewid):
     return pandas.io.parsers.read_csv(os.path.join(SOCRATA, 'rows', viewid))
 
 def viewids():
-    view_ids = os.listdir(VIEWS)
-    return [json.load(open(os.path.join(VIEWS, view_id))) for view_id in view_ids]
+    return os.listdir(VIEWS)
+
+def views():
+    return {view_id: json.load(open(os.path.join(VIEWS, view_id))) for view_id in viewids()}
 
 def columns():
-    pass # for k, v in group_columns(views()).items()
+    return group_columns(views().values())
 
 def join(column_name, view_ids):
     # Load
@@ -38,4 +40,4 @@ def join(column_name, view_ids):
     return left
 
 if __name__ == '__main__':
-    example = join(u'building_address', group_columns(viewids())[(u'text', u'building_address')])
+    example = join(u'building_address', group_columns(views())[(u'text', u'building_address')])
