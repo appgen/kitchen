@@ -13,6 +13,9 @@ def _not_nyc_department(tag):
     return tag not in {u'dob'}
 
 def _app_name(tags):
+    if len(tags) == 0:
+        raise ValueError
+
     good_tags = filter(_not_nyc_department, tags)
     tag = random.sample(good_tags, 1)[0]
     construction_scheme = random.randint(1,3)
@@ -23,7 +26,7 @@ def _app_name(tags):
 
     elif construction_scheme == 2:
         # Add suffix
-        name = random.sample(tag.split(' ')[-1] + random.sample(SUFFIXES, 1)[0])
+        name = random.sample(tag.split(' ')[-1] + random.sample(SUFFIXES, 1)[0], 1)[0]
 
     elif construction_scheme == 3:
         # Remove last vowel
