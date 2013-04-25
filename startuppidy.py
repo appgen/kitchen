@@ -47,13 +47,13 @@ def app(seed):
     # So ugly
     tags = set()
     for view_id in columns[column_name]:
-        tags.union(views[view_id]['tags'])
+        tags = tags.union(views[view_id]['tags'])
 
     # Choose the name
     name = _app_name(tags)
 
     return {
         'name': name,
-        'dataset_ids': colums[column_name],
+        'dataset_ids': columns[column_name],
         'logo': None,
     }
