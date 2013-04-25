@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 import re
 import random
+from itertools import chain
 
 import socrata
 
@@ -22,7 +23,7 @@ def _app_name(tags):
 
     elif construction_scheme == 2:
         # Add suffix
-        name = random.sample(tag.split(' ')[-1] + random.sample(SUFFIXES, 1)[0]
+        name = random.sample(tag.split(' ')[-1] + random.sample(SUFFIXES, 1)[0])
 
     elif construction_scheme == 3:
         # Remove last vowel
@@ -34,16 +35,22 @@ def _app_name(tags):
 views = socrata.views()
 columns = socrata.columns()
 def app(seed):
-    # Set the seed, and then choose the name right away.
+    # Set the seed
     random.seed(seed)
-    name = _app_name(tags)
 
-    # More data dependencies
+    # Data dependencies
     column_name = random.sample(columns, 1)
-    tags = reduce(lambda a, b: a + b, [views[view_id] for view_id in columns[column_name]])
+
+    # So ugly
+    tags = set()
+    for view_id in columns[column_name]:
+        tags.union(views[view_id]['tags'])
+
+    # Choose the name
+    name = _app_name(tags)
 
     return {
         'name': name,
         'dataset_ids': colums[column_name],
-        'logo',
+        'logo': None,
     }
