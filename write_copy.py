@@ -16,6 +16,7 @@ chunked = nltk.batch_ne_chunk(tagged, binary = True)
 import re
 from string import ascii_letters
 
+import random
 import nltk
 import nltk.model
 
@@ -115,7 +116,7 @@ def to_grammar(texts):
     return sentence_chunk_parses, counts
 
 def sentence_chunk_parse(tokenized_sentence):
-    return u'<%s>' % u'><'.join([token[1] for token in tokenized_sentence])
+    return [token[1] for token in tokenized_sentence]
 
 def sentence_word_counts(tokenized_sentence):
     word_counts = {}
@@ -124,6 +125,17 @@ def sentence_word_counts(tokenized_sentence):
             word_counts[token[1]] = {}
         word_counts[token[1]][token[0]] = 1 + word_counts[token[1]].get(token[0], 0)
     return word_counts
+
+def expand_word_counts(word_counts):
+    'Expand the word counts to repeat the words so we can stupidly random.sample'
+    for word,count in word_counts:
+        for i in range(count):
+            yield word
+
+def from_grammar(sentence_chunk_parses, counts):
+    'Generate a sentence from the grammar.'
+    for pos in random.choice(sentence_chunk_parses):
+        yield random.choice(expand_word_counts(counts[pos]))
 
 if __name__ == '__main__':
     s = get_subdescriptions()
