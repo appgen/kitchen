@@ -134,7 +134,15 @@ def expand_word_counts(word_counts):
 
 def from_grammar(sentence_chunk_parses, counts):
     'Generate a sentence from the grammar.'
-    for pos in random.choice(sentence_chunk_parses):
+    parse = random.choice(sentence_chunk_parses)
+
+    # Capitalize the first word.
+    first_pos = parse[0]
+    first_word = random.choice(list(expand_word_counts(counts[first_pos])))
+    yield first_word[0].upper() + first_word[1:]
+
+    # The rest are lowercase.
+    for pos in parse[1:]:
         yield random.choice(list(expand_word_counts(counts[pos])))
 
 if __name__ == '__main__':
