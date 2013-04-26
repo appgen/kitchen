@@ -1,7 +1,9 @@
 #!/usr/bin/env python2
+import os
 import re
 import random
 from itertools import chain
+from urllib import urlencode
 
 import socrata
 
@@ -34,6 +36,13 @@ def _app_name(tags):
         name = ''.join(reversed(re.sub(r'[aoeui]', '', _reversed_name, count = 1)))
 
     return name
+
+def article(title):
+    'Download the English Wikipedia article of a given title.'
+    urlbase = 'en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&'
+    params = urlencode({'titles': title.encode('utf-8')})
+    h = open(os.path.join('pantry', 'wikipedia', urlbase + params))
+    return json.load(h)['query']['pages']['9252']['revisions'][0]['*']
 
 views = socrata.views()
 columns = socrata.columns()
