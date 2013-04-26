@@ -95,6 +95,36 @@ def get_subdescriptions():
         subdescriptions[key] = [d[key].strip() for d in descriptions]
     return subdescriptions
 
+
+def to_grammar(texts):
+    'Convert a paragraph or whatnot into a bunch of sentence grammars.'
+    sentence_chunk_parses = []
+    word_frequencies = {}
+    for text in texts:
+        for sent in nltk.sent_tokenize(text):
+            tokens = nltk.pos_tag(nltk.word_tokenize(sent))
+
+            sentence_chunk_parses.append(sentence_chunk_parse(tokens))
+
+            new_freqs = sentence_word_frequencies(tokens)
+            print new_freqs
+            word_frequencies = {k:dict(
+                (n, word_frequencies[k].get(n, 0) + new_freqs[k].get(n, 0)) for n in
+            ) for k,v in set(word_frequencies) | set(new_freqs)}
+    return sentence_chunk_parses, word_frequencies
+
+
+def sentence_chunk_parse(tokenized_sentence):
+    return u'<%s>' % u'><'.join([token[1] for token in tokenized_sentence])
+
+def sentence_word_frequencies(tokenized_sentence):
+    word_frequencies = {}
+    for token in tokenized_sentence:
+        if token[1] not in word_frequencies:
+            word_frequencies[token[1]] = {}
+        word_frequencies[token[1]][token[0]] = 1 + word_frequencies[token[1]].get(token[0], 0)
+    return word_frequencies
+
 if __name__ == '__main__':
     s = get_subdescriptions()
     m1, m2 = model_subdescription(s['why'])
