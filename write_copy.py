@@ -14,7 +14,7 @@ chunked = nltk.batch_ne_chunk(tagged, binary = True)
 '''
 
 import re
-from string import ascii_letters
+from string import ascii_letters, digits
 
 import random
 import nltk
@@ -23,19 +23,21 @@ import nltk.model
 import collabfinder
 
 LEFT = '(['
-def dewordize(words):
+RIGHT = ')],.\''
+def to_sentence(words):
     'Turn a list of words and punctuation into a string.'
-    text = ''
-    for word in words:
-        if word[0] in (ascii_letters + LEFT):
+    text = words[0][0].upper() + words[0][1:]
+    for word in words[1:]:
+        if word[0] in (ascii_letters + digits):
             # Add a space
             text += ' '
-        elif word[0] in LEFT:
+        elif word[0] in RIGHT:
             # Remove a space
             text = text[:-1]
 
+        # Apped the word.
         text += word
-    return re.sub(r'\.[^.]*$', '.', text[1:])
+    return text
 
 def annotate_first_sentence(subdescriptions):
     '''
@@ -134,15 +136,8 @@ def expand_word_counts(word_counts):
 
 def from_grammar(sentence_chunk_parses, counts):
     'Generate a sentence from the grammar.'
-    parse = random.choice(sentence_chunk_parses)
-
-    # Capitalize the first word.
-    first_pos = parse[0]
-    first_word = random.choice(list(expand_word_counts(counts[first_pos])))
-    yield first_word[0].upper() + first_word[1:]
-
     # The rest are lowercase.
-    for pos in parse[1:]:
+    for pos in random.choice(sentence_chunk_parses):
         yield random.choice(list(expand_word_counts(counts[pos])))
 
 if __name__ == '__main__':
