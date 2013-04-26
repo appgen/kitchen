@@ -128,14 +128,14 @@ def sentence_word_counts(tokenized_sentence):
 
 def expand_word_counts(word_counts):
     'Expand the word counts to repeat the words so we can stupidly random.sample'
-    for word,count in word_counts:
+    for word,count in word_counts.items():
         for i in range(count):
             yield word
 
 def from_grammar(sentence_chunk_parses, counts):
     'Generate a sentence from the grammar.'
     for pos in random.choice(sentence_chunk_parses):
-        yield random.choice(expand_word_counts(counts[pos]))
+        yield random.choice(list(expand_word_counts(counts[pos])))
 
 if __name__ == '__main__':
     s = get_subdescriptions()
