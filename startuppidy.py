@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-import os
+import os, json
 import re
 import random
 from itertools import chain
