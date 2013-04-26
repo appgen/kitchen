@@ -7,7 +7,7 @@ import networkx
 g = networkx.Graph()
 
 from socrata import columns
-c = {k:v for k,v in columns() if len(v) > 10}
+c = {k:v for k,v in columns().items() if len(v) > 10}
 
 # Nodes
 for k,v in c.items():
