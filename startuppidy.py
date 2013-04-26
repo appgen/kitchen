@@ -42,7 +42,7 @@ def app(seed):
     random.seed(seed)
 
     # Data dependencies
-    column_name = random.sample(columns, 1)[0]
+    column_name = random.choice(columns)
 
     # So ugly
     tags = set()
