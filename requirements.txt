@@ -1,0 +1,6 @@
+pandas
+networkx
+python-levenshtein
+lxml.html
+lxml.etree
+requests
