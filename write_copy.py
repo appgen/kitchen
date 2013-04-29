@@ -146,4 +146,4 @@ if __name__ == '__main__':
     def go(m1, m2):
         return dewordize([p[0] for p in generate_subdescription(m1, m2)])
     a,b = to_grammar(s['why'])
-    to_sentence(list(write_copy.from_grammar(a,b)))
+    to_sentence(list(from_grammar(a,b)))
