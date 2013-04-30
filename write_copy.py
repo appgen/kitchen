@@ -61,6 +61,9 @@ def _probabilities(raw_text_generator, weight = 1)
         c[k] = weight * v / n
     return c
 
+def _choose_next_word():
+    raise NotImplementedError('Rewrite this using nltk ngram model.')
+
 # Call these functions from the other file.
 def app_what(keywords):
     sequence = choice(list(_build_collabfinder_what_sequences()))
