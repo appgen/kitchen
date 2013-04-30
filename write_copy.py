@@ -32,3 +32,15 @@ def parse(text):
         'sequence': ['^'] + sequence,
         'frequencies': counts
         }
+
+def build_standard_corpus():
+    '''
+    Generate strings of raw text from Collabfinder, recruiter forms,
+    tech cofounder websites, news articles about apps, &c.
+    (Return a generator of strings.)
+    '''
+
+def build_app_corpus(keywords):
+    '''
+    Use the keywords to find related Wikipedia articles, and return a generator of strings.
+    '''
