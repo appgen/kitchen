@@ -1,7 +1,9 @@
 #!/usr/bin/env python2
+from collections import Counter
+from random import choice
+
 import nltk
 
-import copy_helpers
 from collabfinder import answers
 
 def _parse(text):
@@ -15,7 +17,7 @@ def _parse(text):
     Do not split the text into sentences.
     '''
     sequence = []
-    counts = {}
+    counts = Counter()
     for sent in nltk.sent_tokenize(text):
         # Sequence of parts of speech
         tokens = nltk.pos_tag(nltk.word_tokenize(sent))
@@ -23,12 +25,7 @@ def _parse(text):
             sequence.append(token[1])
 
         # Word counts
-        new_counts = copy_helpers.sentence_word_counts(tokens)
-        for pos,v in new_counts.items():
-            for word,c in v.items():
-                if pos not in counts:
-                    counts[pos] = {}
-                counts[pos][word] = counts[pos].get(word, 0) + 1
+        counts.update((t[1] for t in tokens))
 
     return {
         'sequence': ['^'] + sequence,
@@ -50,11 +47,23 @@ def _build_app_corpus(keywords):
 def _build_collabfinder_what_sequences():
     for a in answers():
         if a['description'] and a['description']['what']:
-            yield _parse(a['description']['what'])
+            yield _parse(a['description']['what'])['sequence']
+
+# Intermediary helpers
+def _probabilities(keywoards)
+    standard_frequencies = reduce(
+        lambda a,b: a + b,
+        (_parse(t)['frequencies'] for t in _build_standard_corpus())
+    )
+    special_frequencies = reduce(
+        lambda a,b: a + b,
+        (_parse(t)['frequencies'] for t in _build_standard_corpus())
+    )
+    raise NotImplementedError('Weight the frequencies, and then make probabilties.')
 
 # Call these functions from the other file.
 def app_what(keywoards):
-    pass
+    sequence = choice(list(_build_collabfinder_what_sequences()))
 
 def app_goal(keywoards):
     pass
