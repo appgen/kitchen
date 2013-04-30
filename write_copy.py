@@ -1,6 +1,8 @@
 #!/usr/bin/env python2
 import nltk
+
 import copy_helpers
+from collabfinder import answers
 
 def _parse(text):
     '''
@@ -45,13 +47,13 @@ def _build_app_corpus(keywords):
     Use the keywords to find related Wikipedia articles, and return a generator of strings.
     '''
 
-def _collabfinder_goal_corups():
-    '''
-    Generate strings of raw text from Collabfinder goals.
-    '''
+def _build_collabfinder_what_sequences():
+    for a in answers():
+        if a['description'] and a['description']['what']:
+            yield _parse(a['description']['what'])
 
 # Call these functions from the other file.
-def app_description(keywords):
+def app_what(keywoards):
     pass
 
 def app_goal(keywoards):
