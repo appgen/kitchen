@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 import nltk
-
+import copy_helpers
 
 def parse(text):
     '''
@@ -15,16 +15,19 @@ def parse(text):
     sentence_chunk_parses = []
     counts = {}
     for sent in nltk.sent_tokenize(text):
+        # Sequence of parts of speech
         tokens = nltk.pos_tag(nltk.word_tokenize(sent))
+        for token in tokens:
+            sentence_chunk_parses.append(token[1])
 
-        sentence_chunk_parses.extend(sentence_chunk_parse(tokens))
-
-        new_counts = sentence_word_counts(tokens)
+        # Word counts
+        new_counts = copy_helpers.sentence_word_counts(tokens)
         for pos,v in new_counts.items():
             for word,c in v.items():
                 if pos not in counts:
                     counts[pos] = {}
                 counts[pos][word] = counts[pos].get(word, 0) + 1
+
     return {
         'sequence': sentence_chunk_parses,
         'frequencies': counts
