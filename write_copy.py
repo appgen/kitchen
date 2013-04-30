@@ -2,7 +2,7 @@
 import nltk
 import copy_helpers
 
-def parse(text):
+def _parse(text):
     '''
     Convert the raw text into POS-tagged tokens,
     starting with the token ('', '^') to indicate
@@ -33,14 +33,26 @@ def parse(text):
         'frequencies': counts
         }
 
-def build_standard_corpus():
+def _build_standard_corpus():
     '''
     Generate strings of raw text from Collabfinder, recruiter forms,
     tech cofounder websites, news articles about apps, &c.
     (Return a generator of strings.)
     '''
 
-def build_app_corpus(keywords):
+def _build_app_corpus(keywords):
     '''
     Use the keywords to find related Wikipedia articles, and return a generator of strings.
     '''
+
+def _collabfinder_goal_corups():
+    '''
+    Generate strings of raw text from Collabfinder goals.
+    '''
+
+# Call these functions from the other file.
+def app_description(keywords):
+    pass
+
+def app_goal(keywoards):
+    pass
