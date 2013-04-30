@@ -12,13 +12,13 @@ def parse(text):
 
     Do not split the text into sentences.
     '''
-    sentence_chunk_parses = []
+    sequence = []
     counts = {}
     for sent in nltk.sent_tokenize(text):
         # Sequence of parts of speech
         tokens = nltk.pos_tag(nltk.word_tokenize(sent))
         for token in tokens:
-            sentence_chunk_parses.append(token[1])
+            sequence.append(token[1])
 
         # Word counts
         new_counts = copy_helpers.sentence_word_counts(tokens)
@@ -29,6 +29,6 @@ def parse(text):
                 counts[pos][word] = counts[pos].get(word, 0) + 1
 
     return {
-        'sequence': sentence_chunk_parses,
+        'sequence': ['^'] + sequence,
         'frequencies': counts
         }
