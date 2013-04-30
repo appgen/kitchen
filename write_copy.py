@@ -50,20 +50,22 @@ def _build_collabfinder_what_sequences():
             yield _parse(a['description']['what'])['sequence']
 
 # Intermediary helpers
-def _probabilities(keywoards)
-    standard_frequencies = reduce(
+def _probabilities(raw_text_generator, weight = 1)
+    'Produce a probability distribution of words.'
+    c = reduce(
         lambda a,b: a + b,
-        (_parse(t)['frequencies'] for t in _build_standard_corpus())
+        (_parse(t)['frequencies'] for t in raw_text_generator())
     )
-    special_frequencies = reduce(
-        lambda a,b: a + b,
-        (_parse(t)['frequencies'] for t in _build_standard_corpus())
-    )
-    raise NotImplementedError('Weight the frequencies, and then make probabilties.')
+    n = float(sum(c.values()))
+    for k,v in c.items():
+        c[k] = weight * v / n
+    return c
 
 # Call these functions from the other file.
-def app_what(keywoards):
+def app_what(keywords):
     sequence = choice(list(_build_collabfinder_what_sequences()))
+    probabilities = _probabilities(_build_standard_corpus(), weight = 0.5) + \
+        _probabilities(_build_app_corpus(keywords), weight = 0.5)
 
-def app_goal(keywoards):
+def app_goal(keywords):
     pass
