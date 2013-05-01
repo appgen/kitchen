@@ -14,7 +14,7 @@ def columndict():
     'A hash from column (type,name) to viewids'
     views = viewdict().values()
     everything = _group(views, lambda view: [(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])]).items()
-    return {k:v for k,v in everything.items() if k != (u'geospatial', u'shape')}
+    return {k:v for k,v in everything if k != (u'geospatial', u'shape')}
 
 def _rows(viewid):
     'Get the rows for a viewid'
