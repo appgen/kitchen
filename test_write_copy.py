@@ -41,3 +41,5 @@ def test_cdf():
         'c': {(1.00, 'b')}
         'e': {(1.00, '$')}
         }
+
+    n.assert_dict_equal(observed, expected)

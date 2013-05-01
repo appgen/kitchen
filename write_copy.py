@@ -50,6 +50,23 @@ def _build_collabfinder_what_sequences():
             yield _parse(a['description']['what'])['sequence']
 
 # Intermediary helpers
+from pandas import DataFrame
+import numpy
+from copy import copy
+def weighted_random_choser(c):
+    '''
+    param c:
+    type c: collections.Counter
+    '''
+
+    p = []
+    word = []
+    for k,v in c.items():
+        p.append(k)
+        word.append(v)
+
+    cdf
+
 def _probabilities(raw_text_generator, weight = 1)
     'Produce a probability distribution of words.'
     c = reduce(
