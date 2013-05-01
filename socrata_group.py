@@ -95,8 +95,8 @@ def attribution_links(views):
 def group_tags(views):
     return group(views, lambda view: view.get('tags', []))
 
-def group_columns(views):
-    return group(views, lambda view: [(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])])
+def distinct_columns(views):
+    return filter(lambda a: a != (u'geospatial', u'shape'), group(views, lambda view: [(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])]))
 
 def group_owner(views):
     return group(views, lambda view: [view.get('owner', {}).get('displayName', None)])
@@ -120,13 +120,13 @@ if __name__ == '__main__':
     view_dir = os.path.join('pantry', 'socrata', 'views')
     view_ids = os.listdir(view_dir)
     views = [json.load(open(os.path.join(view_dir, view_id))) for view_id in view_ids]
-    for k, v in group_columns(views).items():
-        if len(v) > 30:
+    for k, v in distinct_columns(views).items():
+        if len(v) > 50:
             print k
-    for k, v in group_owner(views).items():
-        if len(v) > 2:
-            print k
+#   for k, v in group_owner(views).items():
+#       if len(v) > 2:
+#           print k
 
-    t = attribution_links(views)
-    print set(t.descendant('schools.nyc.gov/NR/rdonlyres/66E8CC55-51E7-4DE5-8C5C-08C588701A1E').descendant_viewids())
-    print set(t.descendant('www.nyc.gov/html/dcp/html').descendant_paths())
+#   t = attribution_links(views)
+#   print set(t.descendant('schools.nyc.gov/NR/rdonlyres/66E8CC55-51E7-4DE5-8C5C-08C588701A1E').descendant_viewids())
+#   print set(t.descendant('www.nyc.gov/html/dcp/html').descendant_paths())

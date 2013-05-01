@@ -3,7 +3,7 @@ import json
 
 import pandas
 
-from socrata_group import group_columns
+from socrata_group import distinct_columns
 
 SOCRATA = os.path.join('pantry', 'socrata')
 VIEWS = os.path.join(SOCRATA, 'views')
@@ -14,15 +14,12 @@ def rows(viewid):
 def viewids():
     return os.listdir(VIEWS)
 
-def views():
+def viewdict():
     return {view_id: json.load(open(os.path.join(VIEWS, view_id))) for view_id in viewids()}
 
-def columns():
-    return group_columns(views().values())
-
-def join(column_name, view_ids):
+def join(column_name, viewids):
     # Load
-    dfs = map(rows, view_ids)
+    dfs = map(row, viewids)
 
     for df in dfs:
         # Lowercase names
@@ -40,4 +37,7 @@ def join(column_name, view_ids):
     return left
 
 if __name__ == '__main__':
-    example = join(u'building_address', group_columns(views())[(u'text', u'building_address')])
+    # example = join(u'building_address', distinct_columns(viewdict().values())[(u'text', u'building_address')])
+    v = viewdict()
+    c = distinct_columns(v.values()))
+    join(u'building_address',
