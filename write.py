@@ -84,5 +84,5 @@ if __name__ == '__main__':
     d = '''
 The word "plumber" dates from the Roman Empire.[2] In Roman times lead was known as plumbum in Latin (hence the abbreviation of 'Pb' for lead on the periodic table of the elements). Roman roofs used lead in conduits and drain pipes[3] and some were also covered with lead, lead was also used for piping and for making baths.[4] In medieval times anyone who worked with lead was referred to as a plumber as can be seen from an extract of workmen fixing a roof in Westminster Palace and were referred to as plumbers "To Gilbert de Westminster, plumber, working about the roof of the pantry of the little hall, covering it with lead, and about various defects in the roof of the little hall".[5] Thus a person with expertise in working with lead was first known as a Plumbarius which was later shortened to plumber.
     '''.split('.')[0]
-    return generate(g, d, 'why')
+    print generate(g, d, 'why')
 

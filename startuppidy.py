@@ -6,6 +6,8 @@ from itertools import chain
 from urllib import urlencode
 
 import socrata
+import write
+from keywords import get_keywords
 
 PREFIXES = [u"responsive", u"game", u"beta", u"tech", u"digital", u"social", u"my", u"our", u"the", u"all", u"in", u"on"]
 SUFFIXES = [u"box", u"grid", u"share", u"wise", u"hop", u"works", u"bit", u"book", u"list", u"square", u"rock", u"ly", u"sy", u"er", u"it", u"ie", u"io", u"am", u"ia", u"ora", u"ero", u"ist", u"ism", u"ium", u"ble", u"ify", u"ous", u"ing"]
@@ -44,25 +46,32 @@ def article(title):
     h = open(os.path.join('pantry', 'wikipedia', urlbase + params))
     return json.load(h)['query']['pages']['9252']['revisions'][0]['*']
 
-views = socrata.views()
-columns = socrata.columns()
+viewdict = socrata.viewdict()
+columndict = socrata.columndict()
+generators = write.build_generators()
 def app(seed):
     # Set the seed
     random.seed(seed)
 
     # Data dependencies
-    column_name = random.choice(columns)
+    column_name = random.choice(columndict.keys())
+    dataset_ids = columndict[column_name]
 
-    # So ugly
-    tags = set()
-    for view_id in columns[column_name]:
-        tags = tags.union(views[view_id]['tags'])
+    # The topic of the app
+    keywords = get_keywords(dataset_ids)
 
     # Choose the name
-    name = _app_name(tags)
+    name = _app_name(keywords)
+
+    # Collabfinder generators
+    def seed_text():
+        return ' '.join(random.sample(keywords, 3))
 
     return {
         'name': name,
-        'dataset_ids': columns[column_name],
+        'dataset_ids': dataset_ids,
         'logo': None,
+        'collabfinder_what': write.generate(generators, seed_text(), 'what'),
+        'collabfinder_why': write.generate(generators, seed_text(), 'why'),
+        'collabfinder_need': write.generate(generators, seed_text(), 'need'),
     }
