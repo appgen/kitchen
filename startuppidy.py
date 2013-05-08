@@ -47,16 +47,16 @@ def article(title):
     return json.load(h)['query']['pages']['9252']['revisions'][0]['*']
 
 viewdict = socrata.viewdict()
-columndict = socrata.columndict()
+columndict = {k:v socrata.columndict()
 generators = write.build_generators()
 
-def dataset(dataset_id):
-    d = viewdict[dataset_id]
-    d[
-#       'datasets': list, each element containing the id, title, description, key words
-
-def dataset(dataset_id):
-    viewdict[dataset_id]
+def dataset(view):
+    return {
+        u'id': view['id'],
+        u'name': view['name'],
+        u'description': view['description'],
+        u'keywords': get_keywords(view),
+    }
 
 def app(seed):
     # Set the seed
@@ -66,8 +66,12 @@ def app(seed):
     column_name = random.choice(columndict.keys())
     dataset_ids = columndict[column_name]
 
+    # Metadata
+    views = [viewdict[dataset_id] for dataset_id in dataset_ids]
+    datasets = map(dataset, views)
+
     # The topic of the app
-    keywords = get_keywords(dataset_ids)
+    keywords = get_keywords(*views)
 
     # Choose the name
     name = _app_name(keywords)
@@ -78,10 +82,11 @@ def app(seed):
 
     return {
         'name': name,
-        'dataset_ids': dataset,
+        'datasets': datasets,
         'logo': None,
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
         'collabfinder_why': write.generate(generators, seed_text(), 'why'),
         'collabfinder_need': write.generate(generators, seed_text(), 'need'),
+#       'data': ,
     }
 
