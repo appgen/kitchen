@@ -90,6 +90,6 @@ def app(seed):
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
         'collabfinder_why': write.generate(generators, seed_text(), 'why'),
         'collabfinder_need': write.generate(generators, seed_text(), 'need'),
-#       'data': ,
+        'data': join(column_name, dataset_ids),
     }
 

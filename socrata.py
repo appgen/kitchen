@@ -14,7 +14,7 @@ def columndict():
     'A hash from column (type,name) to viewids'
     views = viewdict().values()
     everything = _group(views, lambda view: [(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])]).items()
-    return {k:v for k,v in everything if k != (u'geospatial', u'shape')}
+    return {k:v for k,v in everything if k != (u'geospatial', u'shape') and len(v) > 1}
 
 def _rows(viewid):
     'Get the rows for a viewid'
@@ -33,12 +33,14 @@ def _group(views, func):
             items[item].add(view['id'])
     return items
 
-def join(column_name, dfs):
+def join(column_name, ids):
     'Join a bunch of dataframes on a column name'
     # Load
-    for df in dfs:
+    for viewid in ids:
+        # Load it
+        df = _rows(viewid)
         # Lowercase names
-        df.columns = [name.lower() for name in df.columns]
+        df.columns = [viewid + u'-' + name.lower() for name in df.columns]
         # Distinct
         df = df.groupby(column_name).last()
 
