@@ -49,6 +49,15 @@ def article(title):
 viewdict = socrata.viewdict()
 columndict = socrata.columndict()
 generators = write.build_generators()
+
+def dataset(dataset_id):
+    d = viewdict[dataset_id]
+    d[
+#       'datasets': list, each element containing the id, title, description, key words
+
+def dataset(dataset_id):
+    viewdict[dataset_id]
+
 def app(seed):
     # Set the seed
     random.seed(seed)
@@ -69,8 +78,7 @@ def app(seed):
 
     return {
         'name': name,
-#       'datasets': list, each element containing the id, title, description, keywords
-        'dataset_ids': dataset_ids,
+        'dataset_ids': dataset,
         'logo': None,
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
         'collabfinder_why': write.generate(generators, seed_text(), 'why'),
