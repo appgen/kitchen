@@ -93,3 +93,11 @@ def app(seed):
         'data': join(column_name, dataset_ids),
     }
 
+def main():
+    # Generate apps.
+    for i in range(10):
+        params = app(i)
+        json.dump(params, open(os.path.join('comestibles', unicode(i)), 'w'))
+
+if __name__ == '__main__':
+    main()
