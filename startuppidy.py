@@ -90,14 +90,17 @@ def app(seed):
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
         'collabfinder_why': write.generate(generators, seed_text(), 'why'),
         'collabfinder_need': write.generate(generators, seed_text(), 'need'),
-#       'data': socrata.join(column_name, dataset_ids),
+        'data': socrata.join(column_name, dataset_ids).to_dict(),
     }
 
 def main():
     # Generate apps.
     for i in range(10):
-        params = app(i)
-        json.dump(params, open(os.path.join('comestibles', unicode(i)), 'w'))
+        params = {'data': None}
+        while params['data'] == None:
+            params = app(i)
+        handle = open(os.path.join('comestibles', unicode(i)), 'w')
+        json.dump(params, handle)
 
 if __name__ == '__main__':
     main()

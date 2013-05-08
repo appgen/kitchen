@@ -36,22 +36,25 @@ def _group(views, func):
 def join(column_name, ids):
     'Join a bunch of dataframes on a column name'
     # Load
+    dfs = []
     for viewid in ids:
         # Load it
         df = _rows(viewid)
         # Lowercase names
-        df.columns = [name if name == column_name else viewid + u'-' + name.lower() for name in df.columns]
+        df.columns = [name.lower() if name.lower() == column_name[1] else viewid + u'-' + name.lower() for name in df.columns]
         # Distinct
-        df = df.groupby(column_name).last()
+#       df = df.groupby(column_name).last()
+        dfs.append(df)
 
     # Join
     left = dfs[0]
     for right in dfs[1:]:
-        try:
-            left = pandas.merge(left, right, on = column_name)
-        except:
-            break
-    return left
+        left = pandas.merge(left, right, on = column_name[1])
+        if df.empty:
+            left = right
+
+    if not df.empty:
+        return left
 
 if __name__ == '__main__':
     v = viewdict()
