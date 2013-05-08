@@ -40,7 +40,7 @@ def join(column_name, ids):
         # Load it
         df = _rows(viewid)
         # Lowercase names
-        df.columns = [viewid + u'-' + name.lower() for name in df.columns]
+        df.columns = [name if name == column_name else viewid + u'-' + name.lower() for name in df.columns]
         # Distinct
         df = df.groupby(column_name).last()
 

@@ -50,7 +50,7 @@ def article(title):
     return json.load(h)['query']['pages']['9252']['revisions'][0]['*']
 
 viewdict = socrata.viewdict()
-columndict = {k:v socrata.columndict()
+columndict = socrata.columndict()
 generators = write.build_generators()
 
 def dataset(view):
@@ -58,7 +58,7 @@ def dataset(view):
         u'id': view['id'],
         u'name': view['name'],
         u'description': view['description'],
-        u'keywords': get_keywords(view),
+        u'keywords': list(get_keywords(view),)
     }
 
 def app(seed):
@@ -90,7 +90,7 @@ def app(seed):
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
         'collabfinder_why': write.generate(generators, seed_text(), 'why'),
         'collabfinder_need': write.generate(generators, seed_text(), 'need'),
-        'data': join(column_name, dataset_ids),
+#       'data': socrata.join(column_name, dataset_ids),
     }
 
 def main():
