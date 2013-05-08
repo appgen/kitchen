@@ -37,7 +37,10 @@ def _app_name(tags):
         _reversed_name = ''.join(reversed(list(tag.split(' ')[-1])))
         name = ''.join(reversed(re.sub(r'[aoeui]', '', _reversed_name, count = 1)))
 
-    return name
+    if len(name) > 3:
+        return name
+    else:
+        return _app_name(tags)
 
 def article(title):
     'Download the English Wikipedia article of a given title.'
