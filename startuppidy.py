@@ -69,9 +69,11 @@ def app(seed):
 
     return {
         'name': name,
+#       'datasets': list, each element containing the id, title, description, keywords
         'dataset_ids': dataset_ids,
         'logo': None,
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
         'collabfinder_why': write.generate(generators, seed_text(), 'why'),
         'collabfinder_need': write.generate(generators, seed_text(), 'need'),
     }
+
