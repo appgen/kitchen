@@ -31,12 +31,14 @@ def wide_format(view):
     return False
 
 def subsets(_uniondict):
-    output = []
     for schema, viewids in _uniondict.items():
-        names = [viewdict[viewid]['name'] for viewid in viewids]
-        output.append({'schema': schema, 'names': names})
-    return output
+        datasets = [{
+            'id': viewdict[viewid]['id'],
+            'name': viewdict[viewid]['name']
+        } for viewid in viewids]
+        title = socrata.combine_titles([viewdict[viewid] for viewid in viewids])
+        yield {'title': title, 'schema': schema, 'datasets': datasets}
 
 if __name__ == '__main__':
     import json
-    json.dump(subsets(uniondict_broad), open('comestibles/unionable.json', 'w'))
+    json.dump(list(subsets(uniondict_broad)), open('comestibles/unionable.json', 'w'))
