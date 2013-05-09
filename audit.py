@@ -3,7 +3,9 @@ import re
 
 import socrata
 
-# viewdict = socrata.viewdict()
+uniondict = socrata.uniondict()
+uniondict_broad = socrata.uniondict_broad()
+viewdict = socrata.viewdict()
 # columndict = socrata.columndict(minmatches = 1)
 
 def wide_format(view):
@@ -23,7 +25,18 @@ def wide_format(view):
         if number:
             numbers.append(number.group())
 
-    for variable is [years, borough, numbers]:
+    for variable in [years, borough, numbers]:
         if len(variable) > 1:
             return True
     return False
+
+def subsets(_uniondict):
+    output = []
+    for schema, viewids in _uniondict.items():
+        names = [viewdict[viewid]['name'] for viewid in viewids]
+        output.append({'schema': schema, 'names': names})
+    return output
+
+if __name__ == '__main__':
+    import json
+    json.dump(subsets(uniondict_broad), open('comestibles/unionable.json', 'w'))

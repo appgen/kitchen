@@ -38,6 +38,12 @@ def uniondict():
     everything = _group(views, lambda view: [tuple([(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])])]).items()
     return {k:v for k,v in everything if len(v) > 1}
 
+def uniondict_broad():
+    'A hash from partial title to a bunch of datasets that can be unioned'
+    views = viewdict().values()
+    everything = _group(views, lambda view: [tuple([col['fieldName'] for col in view.get('columns', [])])]).items()
+    return {k:v for k,v in everything if len(v) > 1}
+
 def _rows(viewid):
     'Get the rows for a viewid'
     return pandas.io.parsers.read_csv(os.path.join(SOCRATA, 'rows', viewid))
