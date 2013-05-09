@@ -11,11 +11,11 @@ def viewdict():
     'A hash from viewid to the metadata'
     return {view_id: json.load(open(os.path.join(VIEWS, view_id))) for view_id in os.listdir(VIEWS)}
 
-def columndict():
+def columndict(minmatches = 2):
     'A hash from column (type,name) to viewids'
     views = viewdict().values()
     everything = _group(views, lambda view: [(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])]).items()
-    return {k:v for k,v in everything if k != (u'geospatial', u'shape') and len(v) > 1}
+    return {k:v for k,v in everything if k != (u'geospatial', u'shape') and len(v) >= minmatches}
 
 def _is_map(view):
     'Is this view a map?'
@@ -65,7 +65,7 @@ def join(column_type_name, ids):
         # Lowercase names
         df.columns = [name.lower() if name.lower() == column_type_name[1] else viewid + u'-' + name.lower() for name in df.columns]
         # Distinct
-#       df = df.groupby(column_type_name).last()
+        df = df.groupby(column_type_name).last()
         dfs.append(df)
 
     # Join

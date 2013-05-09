@@ -49,11 +49,6 @@ def article(title):
     h = open(os.path.join('pantry', 'wikipedia', urlbase + params))
     return json.load(h)['query']['pages']['9252']['revisions'][0]['*']
 
-viewdict = socrata.viewdict()
-columndict = socrata.columndict()
-uniondict = socrata.uniondict()
-generators = write.build_generators()
-
 def dataset(view):
     return {
         u'id': view['id'],
@@ -110,6 +105,11 @@ def main():
             params = app(i)
         handle = open(os.path.join('comestibles', unicode(i)), 'w')
         json.dump(params, handle)
+
+viewdict = socrata.viewdict()
+columndict = socrata.columndict()
+uniondict = socrata.uniondict()
+generators = write.build_generators()
 
 if __name__ == '__main__':
     main()
