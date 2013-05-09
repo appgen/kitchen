@@ -63,13 +63,11 @@ def join(column_type_name, ids):
     if not df.empty:
         return left
 
-def union(column_type_names, ids):
-    df = None
-    for viewid in ids:
-        if df == None:
-            df = _rows(viewid)
-        else:
-            df.append(_rows(viewid))
+def union(column_type_names, id_set):
+    ids = list(id_set)
+    df = _rows(ids[0])
+    for viewid in ids[1:]:
+        df = df.append(_rows(viewid))
     return df
 
 from Levenshtein import median
@@ -85,5 +83,5 @@ def combine_titles(views):
 
 if __name__ == '__main__':
     v = viewdict()
-#   c = columndict()
+    c = columndict()
     u = uniondict()
