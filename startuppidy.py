@@ -51,6 +51,7 @@ def article(title):
 
 viewdict = socrata.viewdict()
 columndict = socrata.columndict()
+uniondict = socrata.uniondict()
 generators = write.build_generators()
 
 def dataset(view):
@@ -66,8 +67,14 @@ def app(seed):
     random.seed(seed)
 
     # Data dependencies
-    column_name = random.choice(columndict.keys())
-    dataset_ids = columndict[column_name]
+    column_name = random.choice(uniondict.keys())
+    dataset_ids = uniondict[column_name]
+
+    # Union version
+    data = socrata.union(column_name, dataset_ids)
+
+    # Join version
+    # data = socrata.join(column_name, dataset_ids).to_dict(),
 
     # Metadata
     views = [viewdict[dataset_id] for dataset_id in dataset_ids]
@@ -90,7 +97,7 @@ def app(seed):
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
         'collabfinder_why': write.generate(generators, seed_text(), 'why'),
         'collabfinder_need': write.generate(generators, seed_text(), 'need'),
-        'data': socrata.join(column_name, dataset_ids).to_dict(),
+        'data': data,
     }
 
 def main():

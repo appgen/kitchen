@@ -39,7 +39,7 @@ def _group(views, func):
             items[item].add(view['id'])
     return items
 
-def join(column_name, ids):
+def join(column_type_name, ids):
     'Join a bunch of dataframes on a column name'
     # Load
     dfs = []
@@ -47,22 +47,42 @@ def join(column_name, ids):
         # Load it
         df = _rows(viewid)
         # Lowercase names
-        df.columns = [name.lower() if name.lower() == column_name[1] else viewid + u'-' + name.lower() for name in df.columns]
+        df.columns = [name.lower() if name.lower() == column_type_name[1] else viewid + u'-' + name.lower() for name in df.columns]
         # Distinct
-#       df = df.groupby(column_name).last()
+#       df = df.groupby(column_type_name).last()
         dfs.append(df)
 
     # Join
     left = dfs[0]
     for right in dfs[1:]:
-        left = pandas.merge(left, right, on = column_name[1])
+        left = pandas.merge(left, right, on = column_type_name[1])
         if df.empty:
             left = right
 
     if not df.empty:
         return left
 
-if __name__ == '__main__':
+def union(column_type_names, ids):
+    df = None
+    for viewid in ids:
+        if df == None:
+            df = _rows(viewid)
+        else:
+            df.append(_rows(viewid))
+    return df
+
+from Levenshtein import median
+def union_title(views):
+    'Produce a title for a unioned dataset.'
+    titles = [view['name'] for view in views]
+    for title in titles:
+        # Remove borough
+        title = re.sub(r' ?((the ?)?bronx|manhattan|queens|staten island|brooklyn)', '', title)
+        # Remove year
+        title = re.sub(r' ?(199|200)[0-9]', '', title)
+    return median(titles)
+
+if not __name__ == '__main__':
     v = viewdict()
 #   c = columndict()
     u = uniondict()
