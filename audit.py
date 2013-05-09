@@ -37,7 +37,7 @@ def subsets(_uniondict):
             'name': viewdict[viewid]['name'],
             'attribution': viewdict[viewid].get('attribution'),
             'uploader': viewdict[viewid]['owner']['displayName'],
-            'nrow': len(socrata._rows(viewid)),
+           #'nrow': len(socrata._rows(viewid)),
         } for viewid in viewids]
         title = socrata.combine_titles([viewdict[viewid] for viewid in viewids])
         yield {'title': title, 'schema': schema, 'datasets': datasets}
