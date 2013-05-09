@@ -34,7 +34,10 @@ def subsets(_uniondict):
     for schema, viewids in _uniondict.items():
         datasets = [{
             'id': viewdict[viewid]['id'],
-            'name': viewdict[viewid]['name']
+            'name': viewdict[viewid]['name'],
+            'attribution': viewdict[viewid].get('attribution'),
+            'uploader': viewdict[viewid]['owner']['displayName'],
+            'nrow': len(socrata._rows(viewid)),
         } for viewid in viewids]
         title = socrata.combine_titles([viewdict[viewid] for viewid in viewids])
         yield {'title': title, 'schema': schema, 'datasets': datasets}
@@ -48,4 +51,4 @@ def subset_statistics():
 if __name__ == '__main__':
     import json
     json.dump(list(subsets(uniondict_broad)), open('comestibles/unionable.json', 'w'))
-    print subset_statistics()
+    # print subset_statistics()
