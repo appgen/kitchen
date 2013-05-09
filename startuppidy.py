@@ -72,7 +72,7 @@ def app(seed):
     dataset_ids = uniondict[column_name]
 
     # Union version
-    data = socrata.union(column_name, dataset_ids).to_dict()
+    data = socrata.parse_shape(socrata.union(column_name, dataset_ids)).to_dict()
 
     # Join version
     # data = socrata.join(column_name, dataset_ids).to_dict(),

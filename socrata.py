@@ -21,6 +21,17 @@ def _is_map(view):
     'Is this view a map?'
     return (u'geospatial', u'shape') in set([(col['dataTypeName'], col['fieldName']) for col in view.get('columns', [])])
 
+def parse_shape(df):
+    'Parse a shape into longitude and latitude.'
+    def unshape(group = 1):
+        return lambda shape: float(re.match(r'\(([0-9.]*), (-[0-9.]*)\)', shape).group(group))
+
+    df['Longitude'] = df['Shape'].map(unshape(group = 2))
+    df['Latitude'] = df['Shape'].map(unshape(group = 1))
+    del(df['Shape'])
+
+    return df
+
 def uniondict():
     'A hash from partial title to a bunch of datasets that can be unioned'
     views = filter(_is_map, viewdict().values())
