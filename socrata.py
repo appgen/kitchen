@@ -102,6 +102,17 @@ def combine_titles(views):
         title = re.sub(r' ?(199|200)[0-9]', '', title)
     return median(titles)
 
+def fix_types(view, df):
+    set([u'calendar_date',
+             u'text',
+                  u'percent',
+                       u'number',
+                            u'url',
+                                 u'location',
+                                      u'money',
+                                           u'date'])
+
+
 if __name__ == '__main__':
     v = viewdict()
     c = columndict()
