@@ -1,5 +1,6 @@
 import os
 import json
+import re
 
 import pandas
 
@@ -72,7 +73,7 @@ def union(column_type_names, ids):
     return df
 
 from Levenshtein import median
-def union_title(views):
+def combine_titles(views):
     'Produce a title for a unioned dataset.'
     titles = [view['name'] for view in views]
     for title in titles:
@@ -82,7 +83,7 @@ def union_title(views):
         title = re.sub(r' ?(199|200)[0-9]', '', title)
     return median(titles)
 
-if not __name__ == '__main__':
+if __name__ == '__main__':
     v = viewdict()
 #   c = columndict()
     u = uniondict()

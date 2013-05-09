@@ -66,12 +66,13 @@ def app(seed):
     # Set the seed
     random.seed(seed)
 
+
     # Data dependencies
     column_name = random.choice(uniondict.keys())
     dataset_ids = uniondict[column_name]
 
     # Union version
-    data = socrata.union(column_name, dataset_ids)
+    data = socrata.union(column_name, dataset_ids).to_dict()
 
     # Join version
     # data = socrata.join(column_name, dataset_ids).to_dict(),
@@ -92,6 +93,7 @@ def app(seed):
 
     return {
         'name': name,
+        'combined_title': socrata.combine_titles(views),
         'datasets': datasets,
         'logo': None,
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
