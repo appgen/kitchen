@@ -2,6 +2,7 @@
 import re
 
 import socrata
+from helpers import cache, flatten
 
 uniondict = socrata.uniondict()
 uniondict_broad = socrata.uniondict_broad()
@@ -52,3 +53,13 @@ if __name__ == '__main__':
     import json
     json.dump(list(subsets(uniondict_broad)), open('comestibles/unionable.json', 'w'))
     # print subset_statistics()
+
+if __name__ == '__main__':
+    viewdict = cache('viewdict', socrata.viewdict)
+    columndict = cache('columndict', socrata.columndict)
+    uniondict = cache('uniondict', socrata.uniondict)
+    generators = cache('generators', write.build_generators)
+
+    viewdict = cache('viewdict', socrata.viewdict)
+    for viewid, view in viewdict.items():
+        viewdict[viewid]['column_matches']
