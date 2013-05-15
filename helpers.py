@@ -22,8 +22,27 @@ def load(key, cache_dir = '/tmp/appgen'):
         raise KeyError(key)
     return data
 
-def cache(key, cache_dir = '/tmp/appgen'):
+def cache(key, func, cache_dir = '/tmp/appgen'):
     '''
+    Check if a value is in the cache.
+    Load and cache it from the function if it isn\'t already cached.
+    '''
+    cache_path = os.path.join(cache_dir, key + '.p')
+
+    if os.path.exists(cache_path):
+        data = load(key, cache_dir = cache_dir)
+    else:
+        # Run the function
+        data = func()
+
+        # Cache
+        save(key, data, cache_dir = cache_dir)
+
+    return data
+
+def memoize(key, cache_dir = '/tmp/appgen'):
+    '''
+    Use this as a decorator.
     Check if a value is in the cache.
     Load and cache it from the function if it isn\'t already cached.
     '''

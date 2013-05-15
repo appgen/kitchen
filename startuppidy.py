@@ -5,6 +5,7 @@ import random
 from itertools import chain
 from urllib import urlencode
 
+from helpers import cache
 import socrata
 import write
 from keywords import get_keywords
@@ -106,10 +107,10 @@ def main():
         handle = open(os.path.join('comestibles', unicode(i)), 'w')
         json.dump(params, handle)
 
-viewdict = socrata.viewdict()
-columndict = socrata.columndict()
-uniondict = socrata.uniondict()
-generators = write.build_generators()
+viewdict = cache('viewdict', socrata.viewdict)
+columndict = cache('columndict', socrata.columndict)
+uniondict = cache('uniondict', socrata.uniondict)
+generators = cache('generators', write.build_generators)
 
 if __name__ == '__main__':
     main()
