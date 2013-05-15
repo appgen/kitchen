@@ -1,20 +1,26 @@
 #!/usr/bin/env python2
 import socrata
 
+from copy import copy
 from helpers import cache
 
-def flatten(subdict, prefix = None, sep = '.'):
+def flatten(nested_dict, sep = '.'):
     'Flatten a dictionary, replacing nestings with dots or whatnot.'
-    prepend = '' if prefix == None else (prefix + sep)
-    if hasattr(subdict, 'items'):
-        for parent_key, parent in subdict.items():
-            if hasattr(parent, 'items'):
-                for child_key, child in parent.items():
-                    subdict[parent_key + sep + child_key] = child
-                del(subdict[parent_key])
-        return {(prepend + k):flatten(v, prefix = k) for k,v in subdict.items()}
+    d = copy(nested_dict)
+
+def nested_keys(nested_dict, prefix = []):
+    for parent_key, parent in nested_dict.items():
+        if hasattr(parent, 'items'):
+            for child_key in nested_keys(parent, prefix = prefix + [parent_key]):
+                yield child_key
+        else:
+            yield prefix + [parent_key]
+
+def _flatten_pair(key, value):
+    if hasattr(value, 'items'):
+        return {(key + sep + a):b for a,b in value.items()}
     else:
-        return subdict
+        return {key:value}
 
 
 def main():
