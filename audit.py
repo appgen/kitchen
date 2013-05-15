@@ -58,7 +58,7 @@ if __name__ == '__main__':
     dt = DumpTruck('/tmp/appgen.db', auto_commit = False)
     dt.drop('dataset', if_exists = True)
     dt.create_table(viewdict.values()[0], 'dataset')
-    dt.create_index(['name'], 'dataset', if_not_exists = True, unique = True)
+    dt.create_index(['id'], 'dataset', if_not_exists = True, unique = True)
 
     # Add the join references (shared columns).
     columndict = cache('columndict', socrata.columndict)
@@ -77,7 +77,12 @@ if __name__ == '__main__':
     # uniondict_broad = socrata.uniondict_broad()
     # generators = cache('generators', write.build_generators)
 
+
     # Save to the database.
     for view in viewdict.values():
+        # Remove columns because they're big
+        del(view['columns'])
+
+        # Flatten
         dt.insert(flatten(view), 'dataset')
     dt.commit()
