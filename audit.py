@@ -80,8 +80,10 @@ if __name__ == '__main__':
 
     # Save to the database.
     for view in viewdict.values():
+        # There's a lot of interesting stuff in these fields,
+        # but they're big or weakly structured.
         # Remove these because they're big
-        for key in ['columns', 'metadata']:
+        for key in ['columns', 'metadata', 'displayFormat', 'viewFilters', 'query']:
             del(view[key])
 
         # Flatten
