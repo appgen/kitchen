@@ -1,4 +1,4 @@
-# From hardhat
+# Some of this comes from hardhat
 import os
 
 # Cache
@@ -62,3 +62,16 @@ def memoize(key, cache_dir = '/tmp/appgen'):
             return data
         return wrapper
     return decorator
+
+
+def _nested_dict_iter(nested, sep):
+    for key, value in nested.iteritems():
+        if hasattr(value, 'iteritems'):
+            for inner_key, inner_value in _nested_dict_iter(value):
+                yield key + sep + inner_key, inner_value
+        else:
+            yield key, value
+
+def flatten(nested, sep = '.'):
+    'Flatten a dictionary, replacing nested things with dots.'
+    return dict(_nested_dict_iter(nested, sep))

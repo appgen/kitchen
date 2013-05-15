@@ -5,7 +5,7 @@ import random
 from itertools import chain
 from urllib import urlencode
 
-from helpers import cache
+from helpers import cache, flatten
 import socrata
 import write
 from keywords import get_keywords
