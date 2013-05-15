@@ -84,7 +84,8 @@ if __name__ == '__main__':
         # but they're big or weakly structured.
         # Remove these because they're big
         for key in ['columns', 'metadata', 'displayFormat', 'viewFilters', 'query']:
-            del(view[key])
+            if key in view:
+                del(view[key])
 
         # Flatten
         dt.insert(flatten(view), 'dataset')
