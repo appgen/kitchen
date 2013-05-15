@@ -69,10 +69,10 @@ if __name__ == '__main__':
 
     # Add the union references (shared schema)
     uniondict = cache('uniondict', socrata.uniondict)
-    for schema, new_viewids in uniondict.items():
+    for schema, viewids in uniondict.items():
         for viewid in viewids:
-            viewdict[viewid]['schema'] = schema
-            viewdict[viewid]['unionable'] = viewids
+            viewdict[viewid]['schema'] = list(schema)
+            viewdict[viewid]['unionable'] = list(viewids)
 
     # uniondict_broad = socrata.uniondict_broad()
     # generators = cache('generators', write.build_generators)
