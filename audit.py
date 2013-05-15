@@ -51,26 +51,33 @@ def subset_statistics(uniondict_broad):
 
 if __name__ == '__main__':
     # Load the base information.
-    # generators = cache('generators', write.build_generators)
     viewdict = cache('viewdict', socrata.viewdict)
-    uniondict = cache('uniondict', socrata.uniondict)
-
-    # uniondict_broad = socrata.uniondict_broad()
 
     # Connect to the database.
     from dumptruck import DumpTruck
     dt = DumpTruck('/tmp/appgen.db', auto_commit = False)
     dt.drop('dataset', if_exists = True)
     dt.create_table(viewdict.values()[0], 'dataset')
-    dt.create_index(['name'], if_not_exists = True, unique = True)
+    dt.create_index(['name'], 'dataset', if_not_exists = True, unique = True)
 
-    # Add the column references.
+    # Add the join references (shared columns).
     columndict = cache('columndict', socrata.columndict)
     for column, new_viewids in columndict.items():
-        old_viewids = viewdict[viewid].get('column_matches', [])
-        viewdict[viewid]['column_matches'] = list(set(before + viewids))
+        for viewid in new_viewids:
+            old_viewids = set(viewdict[viewid].get('joinable', []))
+            viewdict[viewid]['joinable'] = list(old_viewids.union(new_viewids))
+
+    # Add the union references (shared schema)
+    uniondict = cache('uniondict', socrata.uniondict)
+    for schema, new_viewids in uniondict.items():
+        for viewid in viewids:
+            viewdict[viewid]['schema'] = schema
+            viewdict[viewid]['unionable'] = viewids
+
+    # uniondict_broad = socrata.uniondict_broad()
+    # generators = cache('generators', write.build_generators)
 
     # Save to the database.
     for view in viewdict.values():
-        dt.insert(view, 'dataset')
+        dt.insert(flatten(view), 'dataset')
     dt.commit()
