@@ -4,17 +4,22 @@ import socrata
 from copy import copy
 from helpers import cache
 
-def flatten(nested_dict, sep = '.'):
-    'Flatten a dictionary, replacing nestings with dots or whatnot.'
-    d = copy(nested_dict)
+class NestedDict(dict):
+    @classmethod
+    def nested_keys(nested_dict, prefix = []):
+        for parent_key, parent in nested_dict.items():
+            if hasattr(parent, 'items'):
+                for child_key in NestedDict.nested_keys(parent, prefix = prefix + [parent_key]):
+                    yield child_key
+            else:
+                yield prefix + [parent_key]
 
-def nested_keys(nested_dict, prefix = []):
-    for parent_key, parent in nested_dict.items():
-        if hasattr(parent, 'items'):
-            for child_key in nested_keys(parent, prefix = prefix + [parent_key]):
-                yield child_key
-        else:
-            yield prefix + [parent_key]
+    def nested_get(self, nested_key):
+        return reduce(lambda a,b: a[b], [self] + nested_key)
+
+    def flatten(self, sep = '.'):
+        'Flatten a dictionary, replacing nestings with dots or whatnot.'
+        return {k:self.nested_get(k) for k in NestedDict.nested_keys(self)}
 
 def _flatten_pair(key, value):
     if hasattr(value, 'items'):
