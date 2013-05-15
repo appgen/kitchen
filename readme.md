@@ -24,3 +24,6 @@ the second.
 To do: Allow for fuzzier column name matches. For example, "Building Address"
 should match "building_address", "NEIGHBORHOOD" should match "Neighborhood" and
 "Building Tax Expenses" should match "Bldg tax expenses".
+
+## Other notes
+The metadata field in the view json is crazy.

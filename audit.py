@@ -80,8 +80,9 @@ if __name__ == '__main__':
 
     # Save to the database.
     for view in viewdict.values():
-        # Remove columns because they're big
-        del(view['columns'])
+        # Remove these because they're big
+        for key in ['columns', 'metadata']:
+            del(view[key])
 
         # Flatten
         dt.insert(flatten(view), 'dataset')
