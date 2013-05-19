@@ -4,6 +4,11 @@ import os
 # Cache
 import pickle
 
+try:
+    os.mkdir('/tmp/appgen')
+except OSError:
+    pass
+
 def save(key, value, cache_dir = '/tmp/appgen'):
     'Save an object to the cache_dir.'
     cache_path = os.path.join(cache_dir, key + '.p')
