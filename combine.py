@@ -91,14 +91,20 @@ def build_db(dt):
     return dt
 
 def union(dt):
-    'Union the datasets, and write them to CSV.'
+    'Union the datasets, and write them to CSV and JSON (just ids), each named with a hash of the schema.'
     schemata = [row['schema'] for row in dt.execute('SELECT DISTINCT "schema" FROM "dataset" WHERE "schema" NOT NULL;')]
     for schema in schemata:
-        datasets = dt.execute('SELECT id FROM "dataset" WHERE "schema" = ?', [schema])
-        unioned = pandas.concat([pandas.read_csv(os.path.join(socrata.SOCRATA, 'rows', dataset['id'])) for dataset in datasets])
-        f = open(os.path.join('comestibles', json.dumps(schema)), 'w')
+        dataset_ids = [dataset['id'] for dataset in dt.execute('SELECT id FROM "dataset" WHERE "schema" = ?', [schema])]
+        data = [pandas.read_csv(os.path.join(socrata.SOCRATA, 'rows', dataset_id)) for dataset_id in dataset_ids]
+        unioned = pandas.concat(data)
+        f = open(os.path.join('comestibles', str(json.dumps(schema).__hash__())) + '.csv', 'w')
         unioned.to_csv(f)
         f.close()
+        g = open(os.path.join('comestibles', str(json.dumps(schema).__hash__())) + '.json', 'w')
+        json.dump(dataset_ids, g)
+        g.close()
+        del(data)
+        del(unioned)
 
 def main():
     # Connect to the database.

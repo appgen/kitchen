@@ -43,25 +43,17 @@ def _app_name(tags):
     else:
         return _app_name(tags)
 
-def app(seed):
-    # Set the seed
+def app(basename):
+    'Set the seed from the file name or the hash of the file name.'
+    try:
+        seed = int(basename)
+    except:
+        seed = basename.__hash__()
     random.seed(seed)
 
-    # Data dependencies
-    column_name = random.choice(uniondict.keys())
-    dataset_ids = uniondict[column_name]
-
-    # Union version
-    data = socrata.parse_shape(socrata.union(column_name, dataset_ids)).to_dict()
-
-    # Join version
-    # data = socrata.join(column_name, dataset_ids).to_dict(),
-
     # Metadata
+    dataset_ids = json.load(open(basename + '.json'))
     views = [viewdict[dataset_id] for dataset_id in dataset_ids]
-    datasets = map(dataset, views)
-
-    # The topic of the app
     keywords = get_keywords(*views)
 
     # Choose the name
@@ -74,14 +66,15 @@ def app(seed):
     return {
         'name': name,
         'combined_title': socrata.combine_titles(views),
-        'datasets': datasets,
+        'dataset_ids': dataset_ids,
         'logo': None,
         'collabfinder_what': write.generate(generators, seed_text(), 'what'),
         'collabfinder_why': write.generate(generators, seed_text(), 'why'),
         'collabfinder_need': write.generate(generators, seed_text(), 'need'),
-        'data': data,
+        'data': basename + '.csv',
     }
 
+'''
 def main():
     import combine
     combine.main()
@@ -90,6 +83,7 @@ viewdict = cache('viewdict', socrata.viewdict)
 columndict = cache('columndict', socrata.columndict)
 uniondict = cache('uniondict', socrata.uniondict)
 generators = cache('generators', write.build_generators)
+'''
 
 if __name__ == '__main__':
     main()
