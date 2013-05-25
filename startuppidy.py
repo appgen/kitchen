@@ -43,25 +43,9 @@ def _app_name(tags):
     else:
         return _app_name(tags)
 
-def article(title):
-    'Download the English Wikipedia article of a given title.'
-    urlbase = 'en.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&'
-    params = urlencode({'titles': title.encode('utf-8')})
-    h = open(os.path.join('pantry', 'wikipedia', urlbase + params))
-    return json.load(h)['query']['pages']['9252']['revisions'][0]['*']
-
-def dataset(view):
-    return {
-        u'id': view['id'],
-        u'name': view['name'],
-        u'description': view['description'],
-        u'keywords': list(get_keywords(view),)
-    }
-
 def app(seed):
     # Set the seed
     random.seed(seed)
-
 
     # Data dependencies
     column_name = random.choice(uniondict.keys())
@@ -99,13 +83,8 @@ def app(seed):
     }
 
 def main():
-    # Generate apps.
-    for i in range(10):
-        params = {'data': None}
-        while params['data'] == None:
-            params = app(i)
-        handle = open(os.path.join('comestibles', unicode(i)), 'w')
-        json.dump(params, handle)
+    import combine
+    combine.main()
 
 viewdict = cache('viewdict', socrata.viewdict)
 columndict = cache('columndict', socrata.columndict)

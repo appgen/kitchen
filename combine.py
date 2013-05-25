@@ -1,5 +1,9 @@
 #!/usr/bin/env python2
+import os
 import re
+import json
+
+import pandas
 
 import socrata
 import write
@@ -45,16 +49,13 @@ def subset_statistics(uniondict_broad):
     n_union_result = len(uniondict_broad)
     return n_datasets, n_unionable, n_union_result
 
-def unions():
+def build_db(dt):
     # Load the base information.
     viewdict = cache('viewdict', socrata.viewdict)
 
-    # Connect to the database.
-    from dumptruck import DumpTruck
-    dt = DumpTruck('/tmp/appgen.db', auto_commit = False)
-    dt.drop('unions', if_exists = True)
-    dt.create_table(viewdict.values()[0], 'unions')
-    dt.create_index(['id'], 'unions', if_not_exists = True, unique = True)
+    dt.drop('dataset', if_exists = True)
+    dt.create_table(viewdict.values()[0], 'dataset')
+    dt.create_index(['id'], 'dataset', if_not_exists = True, unique = True)
 
     # Add the join references (shared columns).
     columndict = cache('columndict', socrata.columndict)
@@ -84,8 +85,28 @@ def unions():
                 del(view[key])
 
         # Flatten
-        dt.insert(flatten(view), 'unions')
+        dt.insert(flatten(view), 'dataset')
     dt.commit()
 
+    return dt
+
+def union(dt):
+    'Union the datasets, and write them to CSV.'
+    schemata = [row['schema'] for row in dt.execute('SELECT DISTINCT "schema" FROM "dataset" WHERE "schema" NOT NULL;')]
+    for schema in schemata:
+        datasets = dt.execute('SELECT id FROM "dataset" WHERE "schema" = ?', [schema])
+        unioned = pandas.concat([pandas.read_csv(os.path.join(socrata.SOCRATA, 'rows', dataset['id'])) for dataset in datasets])
+        f = open(os.path.join('comestibles', json.dumps(schema)), 'w')
+        unioned.to_csv(f)
+        f.close()
+
+def main():
+    # Connect to the database.
+    from dumptruck import DumpTruck
+    dt = DumpTruck('/tmp/appgen.db', auto_commit = False)
+    if 'dataset' not in dt.tables():
+        dt = build_db()
+    union(dt)
+
 if __name__ == '__main__':
-    unions()
+    main()
