@@ -45,20 +45,16 @@ def subset_statistics(uniondict_broad):
     n_union_result = len(uniondict_broad)
     return n_datasets, n_unionable, n_union_result
 
-# if __name__ == '__main__':
-#     import json
-#     json.dump(list(subsets(uniondict_broad)), open('comestibles/unionable.json', 'w'))
-
-if __name__ == '__main__':
+def unions():
     # Load the base information.
     viewdict = cache('viewdict', socrata.viewdict)
 
     # Connect to the database.
     from dumptruck import DumpTruck
     dt = DumpTruck('/tmp/appgen.db', auto_commit = False)
-    dt.drop('dataset', if_exists = True)
-    dt.create_table(viewdict.values()[0], 'dataset')
-    dt.create_index(['id'], 'dataset', if_not_exists = True, unique = True)
+    dt.drop('unions', if_exists = True)
+    dt.create_table(viewdict.values()[0], 'unions')
+    dt.create_index(['id'], 'unions', if_not_exists = True, unique = True)
 
     # Add the join references (shared columns).
     columndict = cache('columndict', socrata.columndict)
@@ -88,5 +84,8 @@ if __name__ == '__main__':
                 del(view[key])
 
         # Flatten
-        dt.insert(flatten(view), 'dataset')
+        dt.insert(flatten(view), 'unions')
     dt.commit()
+
+if __name__ == '__main__':
+    unions()
