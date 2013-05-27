@@ -48,9 +48,9 @@ def _union(viewids):
 
 def _combiner(func):
     'Create a combiner function'
-    def g(viewids):
+    def g(generators, viewids):
         'Turn the viewids into a single dataset, with metadata in a json and data in a csv. The base name of the resulting files is returned.'
-        seed = str(func) + ','.join(viewids)
+        seed = hash(str(func) + ','.join(viewids))
 
         # Save CSV data
         df = func(viewids)

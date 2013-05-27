@@ -1,11 +1,17 @@
-import socrata
+import socrata, write
 from helpers import cache
 from combine import union
 
 # viewdict = cache('viewdict', socrata.viewdict)
 # columndict = cache('columndict', socrata.columndict)
-# generators = cache('generators', write.build_generators)
 
+print('Building union dict')
 uniondict = cache('uniondict', socrata.uniondict)
+
+print('Building copy generators')
+generators = write.build_generators()
+
+import json
 for schema, viewids in uniondict.items():
-    union(viewids)
+    print('Appifying schema ' + json.dumps(schema))
+    union(generators, viewids)
