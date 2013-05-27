@@ -54,6 +54,7 @@ def _combiner(func):
 
         # Save CSV data
         df = func(viewids)
+        df = socrata.parse_shape(df)
         df.to_csv(os.path.join('comestibles', '%d.csv' % seed))
 
         # Source JSON metadata
