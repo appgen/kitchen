@@ -4,6 +4,20 @@ Kitchen: Convert raw data into a JSON file per app
 Run `startuppidy.py` to build one JSON file per app in the `comestibles`
 directory. This file runs everything else in the directory.
 
+## Architecture
+Data from Socrata comes as views and rows.
+We group datasets from Socrata based on their unionability, joinabality, &c.
+We combine each group into *enriched datasets*.
+
+We use other data sources to generate copy for each dataset. Specifically,
+we currently use Collabfinder submissions. This is incorporated into the
+enriched datasets.
+
+Enriched datasets are saved as two files, each with the same base name.
+The base name is a number that is used as a random seed. The two extensions
+are `csv`, for the table, and `json` for associated metadata. These files
+go into the `comestibles` directory.
+
 ## Copy-writing approach
 For the copy-writing, I had envisioned parsing the text into a grammatical
 tree, formulating the various trees into a grammar and generating text that
