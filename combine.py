@@ -77,7 +77,7 @@ def _combiner(func):
             'collabfinder_need': write.generate(generators, _seed_text(keywords), 'need'),
         })
 
-        json.dump(metadata, os.path.join('comestibles', '%d.json' % seed))
+        json.dump(metadata, open(os.path.join('comestibles', '%d.json' % seed), 'w'))
 
         return str(seed)
 
