@@ -42,8 +42,12 @@ def _app_name(tags):
 def _seed_text(keywords):
     return ' '.join(random.sample(keywords, 3))
 
+def _add_viewid_column(viewid, df):
+    df['source_dataset_viewid'] = viewid
+    return df
+
 def _union(viewids):
-    data = [pandas.read_csv(os.path.join(ROWS, viewid)) for viewid in viewids]
+    data = [_add_viewid_column(viewid, pandas.read_csv(os.path.join(ROWS, viewid))) for viewid in viewids]
     return pandas.concat(data)
 
 def _combiner(func):
