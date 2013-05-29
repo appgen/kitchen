@@ -2,6 +2,7 @@ import os
 import json
 import re
 
+import numpy
 import pandas
 
 SOCRATA = os.path.join('pantry', 'socrata')
@@ -24,7 +25,12 @@ def _is_map(view):
 def parse_shape(df):
     'Parse a shape into longitude and latitude.'
     def unshape(group = 1):
-        return lambda shape: float(re.match(r'\(([0-9.]*), (-[0-9.]*)\)', shape).group(group))
+        def func(shape):
+            if type(shape) in [str,unicode]:
+                m = re.match(r'\(([0-9.]*), (-[0-9.]*)\)', shape)
+                if m:
+                    return float(m.group(group))
+        return func
 
     df['Longitude'] = df['Shape'].map(unshape(group = 2))
     df['Latitude'] = df['Shape'].map(unshape(group = 1))
