@@ -25,4 +25,9 @@ resource.setrlimit(rsrc, (MEM_GB * (2 ** 30), hard))
 import json
 for schema, viewids in uniondict.items():
     print('Appifying schema ' + json.dumps(schema))
-    union(generators, viewids)
+    try:
+        union(generators, viewids)
+    except:
+        print 'The offending function call:'
+        print 'union(generators, ' + unicode(viewids) + ')'
+        raise
