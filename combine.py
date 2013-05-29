@@ -69,7 +69,7 @@ def _combiner(func):
 
         metadata.update({
             'name': name,
-            'keywords': keywords,
+            'keywords': list(keywords),
             'combined_title': socrata.combine_titles(metadata['sources']),
             'logo': None,
             'collabfinder_what': write.generate(generators, _seed_text(keywords), 'what'),
