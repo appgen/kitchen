@@ -23,11 +23,16 @@ resource.setrlimit(rsrc, (MEM_GB * (2 ** 30), hard))
 
 # Generate the files.
 import json
-for schema, viewids in uniondict.items():
-    print('Appifying schema ' + json.dumps(schema))
-    try:
-        union(generators, viewids)
-    except:
-        print 'The offending function call:'
-        print 'union(generators, ' + unicode(viewids) + ')'
-        raise
+def build():
+    for schema, viewids in uniondict.items():
+        print('Appifying schema ' + json.dumps(schema))
+        try:
+            yield union(generators, viewids)
+        except:
+            print 'The offending function call:'
+            print 'union(generators, ' + unicode(viewids) + ')'
+            raise
+
+def main():
+    seeds = list(build)
+    json.dump(seeds, open(os.path.join('comestibles', 'index.json'), 'w'))
