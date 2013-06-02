@@ -55,6 +55,7 @@ def _combiner(func):
     def g(generators, viewids):
         'Turn the viewids into a single dataset, with metadata in a json and data in a csv. The base name of the resulting files is returned.'
         seed = hash(str(func) + ','.join(viewids))
+        print seed
 
         geojson_file = os.path.join('comestibles', '%d.geojson' % seed)
         json_file = os.path.join('comestibles', '%d.json' % seed)
@@ -69,17 +70,17 @@ def _combiner(func):
             df.to_csv(csv_file)
 
         # Save geoJSON.
-        if {'Longitude', 'Latitude'}.issubset(df.columns) and not os.path.exists(geojson_file):
+        if {'Longitude', 'Latitude'}.issubset(set(df.columns)) and not os.path.exists(geojson_file):
             feature_collection = { "type": "FeatureCollection",
                                    "features": [] }
             for i in df.index:
-                properties = df[i].to_dict()
+                properties = df.ix[i].to_dict()
                 feature = { "type": "Feature",
                             "geometry": {"type": "Point", "coordinates": [properties.pop('Longitude'), properties.pop('Latitude')]},
                           }
                 feature["properties"] = properties
                 feature_collection['features'].append(feature)
-            json.dump(feature_collection, geojson_file)
+            json.dump(feature_collection, open(geojson_file, 'w'))
 
         if not os.path.exists(json_file):
             # Source JSON metadata
@@ -102,7 +103,7 @@ def _combiner(func):
                 'collabfinder_need': write.generate(generators, _seed_text(keywords), 'need'),
             })
 
-            json.dump(metadata, json_file)
+            json.dump(metadata, open(json_file, 'w'))
 
         return str(seed)
 
