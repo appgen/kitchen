@@ -33,6 +33,7 @@ def build():
             print 'union(generators, ' + unicode(viewids) + ')'
             raise
 
-seeds = list(build())
-json.dump(seeds, open(os.path.join('comestibles', 'index.json'), 'w'))
-json.dump('Not found', open(os.path.join('comestibles', '404.json'), 'w'))
+if __name__ == '__main__':
+    seeds = list(build())
+    json.dump(seeds, open(os.path.join('comestibles', 'index.json'), 'w'))
+    json.dump('Not found', open(os.path.join('comestibles', '404.json'), 'w'))
