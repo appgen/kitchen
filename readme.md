@@ -1,7 +1,7 @@
-Kitchen: Convert raw data into a JSON file per app
+Kitchen: Convert raw data into app-level data
 ====
 
-Run `startuppidy.py` to build one JSON file per app in the `comestibles`
+Run `main.py` to build three files per app in the `comestibles`
 directory. This file runs everything else in the directory.
 
 ## Architecture
@@ -13,10 +13,10 @@ We use other data sources to generate copy for each dataset. Specifically,
 we currently use Collabfinder submissions. This is incorporated into the
 enriched datasets.
 
-Enriched datasets are saved as two files, each with the same base name.
-The base name is a number that is used as a random seed. The two extensions
-are `csv`, for the table, and `json` for associated metadata. These files
-go into the `comestibles` directory.
+Enriched datasets are saved as three files, each with the same base name.
+The base name is a number that is used as a random seed. The extensions
+are `csv` and `geojson`, both for the table, and `json` for associated
+metadata. These files go into the `comestibles` directory.
 
 ## Copy-writing approach
 For the copy-writing, I had envisioned parsing the text into a grammatical
