@@ -56,32 +56,53 @@ def _combiner(func):
         'Turn the viewids into a single dataset, with metadata in a json and data in a csv. The base name of the resulting files is returned.'
         seed = hash(str(func) + ','.join(viewids))
 
-        # Save CSV data
+        geojson_file = os.path.join('comestibles', '%d.geojson' % seed)
+        json_file = os.path.join('comestibles', '%d.json' % seed)
+        csv_file = os.path.join('comestibles', '%d.csv' % seed)
+
+        # Combine the data and extract coordinates.
         df = func(viewids)
         df = socrata.parse_shape(df)
-        df.to_csv(os.path.join('comestibles', '%d.csv' % seed))
 
-        # Source JSON metadata
-        metadata = {
-            'seed': seed,
-            'sources': [json.load(open(os.path.join(VIEWS, viewid))) for viewid in viewids],
-        }
+        # Save CSV data
+        if not os.path.exists(csv_file):
+            df.to_csv(csv_file)
 
-        # Create more metadata
-        keywords = get_keywords(*metadata['sources'])
-        name = _app_name(keywords)
+        # Save geoJSON.
+        if {'Longitude', 'Latitude'}.issubset(df.columns) and not os.path.exists(geojson_file):
+            feature_collection = { "type": "FeatureCollection",
+                                   "features": [] }
+            for i in df.index:
+                properties = df[i].to_dict()
+                feature = { "type": "Feature",
+                            "geometry": {"type": "Point", "coordinates": [properties.pop('Longitude'), properties.pop('Latitude')]},
+                          }
+                feature["properties"] = properties
+                feature_collection['features'].append(feature)
+            json.dump(feature_collection, geojson_file)
 
-        metadata.update({
-            'name': name,
-            'keywords': list(keywords),
-            'combined_title': socrata.combine_titles(metadata['sources']),
-            'logo': None,
-            'collabfinder_what': write.generate(generators, _seed_text(keywords), 'what'),
-            'collabfinder_why': write.generate(generators, _seed_text(keywords), 'why'),
-            'collabfinder_need': write.generate(generators, _seed_text(keywords), 'need'),
-        })
+        if not os.path.exists(json_file):
+            # Source JSON metadata
+            metadata = {
+                'seed': seed,
+                'sources': [json.load(open(os.path.join(VIEWS, viewid))) for viewid in viewids],
+            }
 
-        json.dump(metadata, open(os.path.join('comestibles', '%d.json' % seed), 'w'))
+            # Create more metadata
+            keywords = get_keywords(*metadata['sources'])
+            name = _app_name(keywords)
+
+            metadata.update({
+                'name': name,
+                'keywords': keywords,
+                'combined_title': socrata.combine_titles(metadata['sources']),
+                'logo': None,
+                'collabfinder_what': write.generate(generators, _seed_text(keywords), 'what'),
+                'collabfinder_why': write.generate(generators, _seed_text(keywords), 'why'),
+                'collabfinder_need': write.generate(generators, _seed_text(keywords), 'need'),
+            })
+
+            json.dump(metadata, json_file)
 
         return str(seed)
 
