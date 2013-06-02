@@ -8,6 +8,6 @@ for json in comestibles/*.json; do
     if test -f -- "$seed.$extension" && ! test -f -- "$seed.$extension"; then
       gzip "$seed.$extension"
     fi
-    s3cmd put "$seed.$extension.gz" s3://comestibles.appgen.me/"$seed.$extension"
+    s3cmd --add-header=Content-Encoding:gzip put "$seed.$extension.gz" s3://comestibles.appgen.me/"$seed.$extension"
   done
 done
