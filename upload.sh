@@ -12,6 +12,7 @@ if test -d comestibles; then
       s3cmd put "comestibles/$seed.$extension.gz" s3://comestibles.appgen.me/"$seed.$extension" --add-header=Content-Encoding:gzip
     done
   done
+  s3cmd put comestibles/index.json comestibles/404.json s3://comestibles.appgen.me
 else
   echo I can\'t find the comestibles directory.
 fi
