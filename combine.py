@@ -76,7 +76,7 @@ def _combiner(func, funcname):
             feature_collection = { "type": "FeatureCollection",
                                    "features": [] }
             for i in df.index:
-                properties = df.ix[i].to_dict()
+                properties = {k:(float(v) if type(v) != str else v) for k,v in df.ix[i].to_dict().items()}
                 feature = { "type": "Feature",
                             "geometry": {"type": "Point", "coordinates": map(float, [properties.pop('Longitude'), properties.pop('Latitude')])},
                           }
