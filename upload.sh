@@ -2,9 +2,9 @@
 # Upload comestibles
 set -e
 
-for json in comestibles/*.json; do
-  seed=$(basename $json .json)
-  for extension in json csv; do
+for geojson in comestibles/*.geojson; do
+  seed=$(basename $geojson .geojson)
+  for extension in json csv geojson; do
     if test -f "./$seed.$extension" && ! test -f "./$seed.$extension.gz"; then
       gzip "./$seed.$extension"
     fi
