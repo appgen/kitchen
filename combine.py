@@ -50,27 +50,29 @@ def _union(viewids):
     data = [_add_viewid_column(viewid, pandas.read_csv(os.path.join(ROWS, viewid))) for viewid in viewids]
     return pandas.concat(data)
 
-def _combiner(func):
+def _combiner(func, funcname):
     'Create a combiner function'
     def g(generators, viewids):
         'Turn the viewids into a single dataset, with metadata in a json and data in a csv. The base name of the resulting files is returned.'
-        seed = hash(str(func) + ','.join(viewids))
+        seed = hash(funcname + ','.join(sorted(viewids)))
         print seed
 
         geojson_file = os.path.join('comestibles', '%d.geojson' % seed)
         json_file = os.path.join('comestibles', '%d.json' % seed)
         csv_file = os.path.join('comestibles', '%d.csv' % seed)
 
-        # Combine the data and extract coordinates.
+        print 'Combining the data'
         df = func(viewids)
+
+        print 'Extracting geospatial coordinates'
         df = socrata.parse_shape(df)
 
         # Save CSV data
         if not os.path.exists(csv_file):
             df.to_csv(csv_file)
 
-        # Save geoJSON.
-        if {'Longitude', 'Latitude'}.issubset(set(df.columns)) and not os.path.exists(geojson_file):
+        # Save geoJSON if the dataset is a small map.
+        if {'Longitude', 'Latitude'}.issubset(set(df.columns)) and df.shape[0] < 10000 and not os.path.exists(geojson_file):
             feature_collection = { "type": "FeatureCollection",
                                    "features": [] }
             for i in df.index:
@@ -90,7 +92,7 @@ def _combiner(func):
             }
 
             # Create more metadata
-            keywords = get_keywords(*metadata['sources'])
+            keywords = list(get_keywords(*metadata['sources']))
             name = _app_name(keywords)
 
             metadata.update({
@@ -110,4 +112,4 @@ def _combiner(func):
     return g
 
 # Exposed functions
-union = _combiner(_union)
+union = _combiner(_union, 'union')
