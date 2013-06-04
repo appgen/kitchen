@@ -78,7 +78,7 @@ def _combiner(func, funcname):
             for i in df.index:
                 properties = df.ix[i].to_dict()
                 feature = { "type": "Feature",
-                            "geometry": {"type": "Point", "coordinates": [properties.pop('Longitude'), properties.pop('Latitude')]},
+                            "geometry": {"type": "Point", "coordinates": [properties.pop('Longitude').values()[0], properties.pop('Latitude').values()[0]]},
                           }
                 feature["properties"] = properties
                 feature_collection['features'].append(feature)
