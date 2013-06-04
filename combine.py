@@ -75,8 +75,23 @@ def _combiner(func, funcname):
         if {'Longitude', 'Latitude'}.issubset(set(df.columns)) and df.shape[0] < 10000 and not os.path.exists(geojson_file):
             feature_collection = { "type": "FeatureCollection",
                                    "features": [] }
+            def _fix_cell(v):
+                if type(v) in {unicode, str}:
+                    return v
+                elif type(v) == dict:
+                    # I have no idea where this comes from.
+                    return v.values()[0]
+                else:
+                    return float(v)
+
             for i in df.index:
-                properties = {k:(float(v) if type(v) != str else v) for k,v in df.ix[i].to_dict().items()}
+                try:
+                    properties = {k:_fix_cell(v) for k,v in df.ix[i].to_dict().items()}
+                except:
+                    print seed
+                    print i
+                    print df.ix[i].to_dict()
+                    raise
                 feature = { "type": "Feature",
                             "geometry": {"type": "Point", "coordinates": map(float, [properties.pop('Longitude'), properties.pop('Latitude')])},
                           }
