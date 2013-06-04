@@ -107,8 +107,6 @@ def _combiner(func, funcname):
 
             json.dump(metadata, open(json_file, 'w'))
 
-        return str(seed)
-
     return g
 
 # Exposed functions
