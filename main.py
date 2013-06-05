@@ -27,7 +27,7 @@ def build():
     for schema, viewids in uniondict.items():
         print('Appifying schema ' + json.dumps(schema))
         try:
-            yield union(generators, viewids)
+            union(generators, viewids)
         except:
             print 'The offending function call:'
             print 'union(generators, ' + unicode(viewids) + ')'
