@@ -37,6 +37,6 @@ if __name__ == '__main__':
     import os
 
     list(build())
-    seeds = filter(lambda fn: '.geojson' in fn, os.listdir('comestibles'))
+    seeds = filter(lambda fn: '.geojson' in fn, os.listdir('comestibles')).replace('.geojson', '')
     json.dump(seeds, open(os.path.join('comestibles', 'index.json'), 'w'))
     json.dump('Not found', open(os.path.join('comestibles', '404.json'), 'w'))
